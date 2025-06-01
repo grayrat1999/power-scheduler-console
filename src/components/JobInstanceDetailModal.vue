@@ -90,11 +90,7 @@
       <a-row class="mb-2">
         <a-col :span="6">执行结果或错误信息</a-col>
         <a-col :span="18">
-          <a-typography-paragraph
-            copyable
-            :ellipsis="{ rows: 2 }"
-            :content="currentJobInstanceDetail.message"
-          />
+          <pre class="max-h-36">{{ currentJobInstanceDetail.message }}</pre>
         </a-col>
       </a-row>
     </div>

@@ -3,7 +3,7 @@
     <template #footer>
       <a-button @click="visibility = false">确定</a-button>
     </template>
-    <div class="h-[400px] overflow-y-auto">{{ currentJobErrorMessage }}</div>
+    <pre class="max-h-[60vh]">{{ currentJobErrorMessage }}</pre>
   </a-modal>
 </template>
 

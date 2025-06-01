@@ -114,7 +114,7 @@
               <span>更多</span>
               <template #overlay>
                 <a-menu>
-                  <a-menu-item v-if="record.jobStatus == 'FAILED'">
+                  <a-menu-item v-if="record.jobStatus.code == 'FAILED'">
                     <div
                       class="text-blue-500"
                       @click="jobInstanceMessageModalRef.openModal(record)"
