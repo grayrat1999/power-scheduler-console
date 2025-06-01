@@ -10,6 +10,11 @@
         :loading="loading"
         @change="handleTableChange"
       >
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.dataIndex === 'secret'">
+            <RevealText :value="record.secret" />
+          </template>
+        </template>
       </a-table>
     </div>
 
@@ -22,6 +27,7 @@ import { ref, onMounted } from 'vue'
 import { listAppGroup } from '@/service/api/appGroupApi'
 import requestForPage from '@/utils/pageRequest'
 import AppGroupSaveModal from '@/components/AppGroupSaveModal.vue'
+import RevealText from '@/components/RevealText.vue'
 
 const appGroupSaveModalRef = ref()
 const dataSource = ref([])
