@@ -153,18 +153,6 @@
             </a-select>
           </a-form-item>
 
-          <!-- <a-form-item label="超时时间(秒)" name="timeoutPeriod">
-            <a-input-number
-              class="w-full"
-              v-model:value="currentJobInfo.extendConfig.timeoutPeriod"
-              min="1"
-            />
-          </a-form-item>
-
-          <a-form-item label="超时终止" name="timeoutAbortEnabled">
-            <a-switch v-model:checked="currentJobInfo.extendConfig.timeoutAbortEnabled" />
-          </a-form-item> -->
-
           <a-form-item
             label="失败重试次数"
             :name="['maxAttemptCnt']"
@@ -183,57 +171,17 @@
         </div>
       </template>
 
-      <!-- <template v-else-if="currentStep == 2">
-        <a-form-item label="通知场景" :name="['extendConfig', 'notifyConfig', 'notifyScenes']">
-          <a-checkbox-group
-            v-model:value="currentJobInfo.extendConfig.notifyConfig.notifyScenes"
-            :options="matesOptions.notifyScene"
-          />
-        </a-form-item>
-
-        <a-form-item label="通知渠道" :name="['extendConfig', 'notifyConfig', 'notifyChannels']">
-          <a-checkbox-group
-            v-model:value="currentJobInfo.extendConfig.notifyConfig.notifyChannels"
-            :options="matesOptions.notifyChannel"
-          />
-        </a-form-item>
-
-        <a-form-item
-          label="通知联系组"
-          :name="['extendConfig', 'notifyConfig', 'notifyContactIds']"
-        >
-          <a-select
-            v-model:value="currentJobInfo.extendConfig.notifyConfig.notifyContactIds"
-            show-search
-            mode="multiple"
-            :options="contactOptions"
-            :filterOption="false"
-            @search="fetchContactOptions"
-          />
-        </a-form-item>
-
-        <a-form-item
-          label="通知联系人"
-          :name="['extendConfig', 'notifyConfig', 'notifyContactGroupIds']"
-        >
-          <a-select
-            v-model:value="currentJobInfo.extendConfig.notifyConfig.notifyContactGroupIds"
-            show-search
-            mode="multiple"
-            :options="contactGroupOptions"
-            :filterOption="false"
-            @search="fetchContactGroupOptions"
-          />
-        </a-form-item>
-      </template> -->
-
       <a-row>
         <a-col :span="3" :offset="18">
           <a-button type="primary" v-show="currentStep > 0" @click="currentStep--">上一步</a-button>
         </a-col>
         <a-col :span="3">
-          <a-button type="primary" v-show="currentStep < 2" @click="goToNextStep">下一步</a-button>
-          <a-button type="primary" v-show="currentStep == 2" @click="onSubmit">确定</a-button>
+          <a-button type="primary" v-show="currentStep < steps.length - 1" @click="goToNextStep"
+            >下一步</a-button
+          >
+          <a-button type="primary" v-show="currentStep == steps.length - 1" @click="onSubmit"
+            >确定</a-button
+          >
         </a-col>
       </a-row>
     </a-form>
@@ -246,8 +194,6 @@ import { message, Modal } from 'ant-design-vue'
 import { buildMetadataOptions } from '@/utils/metadataUtils'
 import { listMetadata } from '@/service/api/metadataApi'
 import { parseCron } from '@/service/api/toolApi'
-// import { listContact } from '@/service/api/contact'
-// import { listContactGroup } from '@/service/api/contactGroup'
 import { getJobInfo, addJobInfo, editJobInfo } from '@/service/api/jobInfoApi'
 
 const steps = [
@@ -256,9 +202,6 @@ const steps = [
   },
   {
     title: '调度配置'
-  },
-  {
-    title: '通知配置'
   }
 ]
 const emptyJobInfo = {
@@ -294,50 +237,18 @@ const scriptTypeOptions = ref([])
 const title = ref('')
 const saveMode = ref('')
 const formRef = ref()
-const contactOptions = ref([])
-const contactGroupOptions = ref([])
 const visibility = ref(false)
 const expandAdvanceConfig = ref(false)
 const currentStep = ref(0)
 const currentAppCode = ref('')
 const currentJobInfo = reactive({})
 
-const fetchContactOptions = async (searchText) => {
-  let contactGroupPage = await listContact({
-    appCode: currentAppCode.value,
-    name: searchText,
-    pageNo: 1,
-    pageSize: 10
-  })
-  contactOptions.value = contactGroupPage.content.map((it) => {
-    return {
-      label: it.name,
-      value: it.id
-    }
-  })
-}
-
-const fetchContactGroupOptions = async (searchText) => {
-  let contactGroupPage = await listContactGroup({
-    appCode: currentAppCode.value,
-    name: searchText,
-    pageNo: 1,
-    pageSize: 10
-  })
-  contactGroupOptions.value = contactGroupPage.content.map((it) => {
-    return {
-      label: it.name,
-      value: it.id
-    }
-  })
-}
-
 const openModal = async (appCode, jobId) => {
   Object.assign(currentJobInfo, emptyJobInfo)
   visibility.value = true
   currentStep.value = 0
   currentAppCode.value = appCode
-  const fetchOptionPromise = fetchAllOptions()
+  fetchAllOptions()
   if (jobId) {
     saveMode.value = 'edit'
     title.value = '编辑任务'
@@ -368,7 +279,7 @@ const handleParseCron = async () => {
       items.map((item) => h('li', item))
     ),
     okText: '确定',
-    cancelButtonProps: { style: { display: 'none' } } // 隐藏取消按钮
+    cancelButtonProps: { style: { display: 'none' } }
   })
 }
 
@@ -420,8 +331,6 @@ const fetchMetadatas = async () => {
 }
 
 const fetchAllOptions = async () => {
-  // fetchContactOptions()
-  // fetchContactGroupOptions()
   fetchMetadatas()
 }
 

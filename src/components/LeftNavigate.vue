@@ -41,12 +41,7 @@ const items = reactive([
   getItem('首页', 'index', () => h(DashboardOutlined)),
   getItem('应用管理', 'groupManager', () => h(AppstoreOutlined)),
   getItem('任务管理', 'jobManager', () => h(FunctionOutlined)),
-  getItem('执行记录', 'jobInstanceManager', () => h(CalendarOutlined)),
-  getItem('通知管理', 'notifyManager', () => h(BellOutlined), [
-    getItem('联系人', 'contactManager', () => h(UserOutlined)),
-    getItem('联系人组', 'contactGroupManager', () => h(UsergroupAddOutlined)),
-    getItem('消息历史', 'notifyInstanceManager', () => h(MailOutlined))
-  ])
+  getItem('执行记录', 'jobInstanceManager', () => h(CalendarOutlined))
 ])
 
 const handleClick = (clickItem) => {
