@@ -45,6 +45,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.PACKAGE_TOKEN }}
+
+      - name: Log in to Aliyun Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: registry.cn-hangzhou.aliyuncs.com
+          username: ${{ secrets.ALIYUN_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+
       - name: Build and push multi-arch image Docker image
         uses: docker/build-push-action@v5
         with:
@@ -55,3 +69,4 @@ jobs:
           tags: |
             771592594/power-scheduler-console:${{ env.DOCKER_TAG }}
             ghcr.io/${{ github.actor }}/power-scheduler-console:${{ env.DOCKER_TAG }}
+            registry.cn-hangzhou.aliyuncs.com/wcz-docker-repo/power-scheduler-console:${{ env.DOCKER_TAG }}
