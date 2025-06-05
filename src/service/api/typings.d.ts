@@ -37,9 +37,9 @@ declare namespace API {
   };
 
   type DashboardStatisticsInfoQueryResponseDTO = {
+    jobInstanceCount: number;
     succeedJobInstanceCount: number;
     failedJobInstanceCount: number;
-    jobInstanceCount: number;
   };
 
   type ExecuteModeDTO = {
@@ -67,14 +67,16 @@ declare namespace API {
     scheduleConfig?: string;
     jobType: 'JAVA' | 'SCRIPT';
     processor?: string;
-    executeMode: 'SINGLE' | 'BROADCAST';
+    executeMode: 'SINGLE' | 'BROADCAST' | 'MAP_REDUCE';
     executeParams?: string;
     maxConcurrentNum: number;
     scriptType?: 'BASH' | 'CMD' | 'PYTHON' | 'POWER_SHELL';
     scriptCode?: string;
     maxAttemptCnt: number;
     priority: number;
-    attemptInterval?: number;
+    attemptInterval: number;
+    retentionPolicy: 'RECENT_DAYS' | 'RECENT_COUNT';
+    retentionValue: number;
   };
 
   type JobInfoDetailResponseDTO = {
@@ -110,7 +112,7 @@ declare namespace API {
     scheduleConfig?: string;
     jobType: 'JAVA' | 'SCRIPT';
     processor?: string;
-    executeMode: 'SINGLE' | 'BROADCAST';
+    executeMode: 'SINGLE' | 'BROADCAST' | 'MAP_REDUCE';
     executeParams?: string;
     maxConcurrentNum: number;
     scriptType?: 'BASH' | 'CMD' | 'PYTHON' | 'POWER_SHELL';
@@ -118,6 +120,8 @@ declare namespace API {
     maxAttemptCnt: number;
     priority: number;
     attemptInterval?: number;
+    retentionPolicy: 'RECENT_DAYS' | 'RECENT_COUNT';
+    retentionValue: number;
   };
 
   type JobInfoQueryRequestDTO = {
@@ -152,11 +156,6 @@ declare namespace API {
     createdAt?: string;
     updatedBy?: string;
     updatedAt?: string;
-  };
-
-  type JobInfoSwitchRequestDTO = {
-    jobId: number;
-    enabled: boolean;
   };
 
   type JobInstanceDetailResponseDTO = {
@@ -242,6 +241,11 @@ declare namespace API {
     label?: string;
   };
 
+  type JobSwitchRequestDTO = {
+    jobId: number;
+    enabled: boolean;
+  };
+
   type JobTypeDTO = {
     code?: string;
     label?: string;
@@ -249,11 +253,6 @@ declare namespace API {
 
   type listMetadataParams = {
     metadataCodes: string[];
-  };
-
-  type listNextScheduleTimeParams = {
-    cronExpression: string;
-    count?: number;
   };
 
   type listWorkerParams = {
@@ -412,27 +411,6 @@ declare namespace API {
 
   type ResponseWrapperListMetadataDTO = {
     data?: MetadataDTO[];
-    success: boolean;
-    code: string;
-    message: string;
-    cause?: {
-      stackTrace?: {
-        classLoaderName?: string;
-        moduleName?: string;
-        moduleVersion?: string;
-        methodName?: string;
-        fileName?: string;
-        lineNumber?: number;
-        className?: string;
-        nativeMethod?: boolean;
-      }[];
-      message?: string;
-      localizedMessage?: string;
-    };
-  };
-
-  type ResponseWrapperListString = {
-    data?: string[];
     success: boolean;
     code: string;
     message: string;

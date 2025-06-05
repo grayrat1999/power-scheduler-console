@@ -59,21 +59,6 @@ export async function listJobInfo(
   });
 }
 
-/** 查询下次执行时间 GET /api/jobInfos/listNextScheduleTime */
-export async function listNextScheduleTime(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.listNextScheduleTimeParams,
-  options?: { [key: string]: any },
-) {
-  return request<API.ResponseWrapperListString>(`/api/jobInfos/listNextScheduleTime`, {
-    method: 'GET',
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
 /** 删除任务 POST /api/jobInfos/remove */
 export async function removeJobInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -103,7 +88,7 @@ export async function run(body: API.JobRunRequestDTO, options?: { [key: string]:
 
 /** 修改任务启用状态 POST /api/jobInfos/switch */
 export async function switchEnable(
-  body: API.JobInfoSwitchRequestDTO,
+  body: API.JobSwitchRequestDTO,
   options?: { [key: string]: any },
 ) {
   return request<API.ResponseWrapperUnit>(`/api/jobInfos/switch`, {

@@ -76,6 +76,25 @@
         >
           <a-textarea v-model:value="currentJobInfo.scriptCode" :rows="3" />
         </a-form-item>
+
+        <a-form-item
+          label="清理策略"
+          name="retentionPolicy"
+          :rules="[{ required: true, message: 'Please Select retentionPolicy!' }]"
+        >
+          <a-input v-model:value="currentJobInfo.retentionValue">
+            <template #addonBefore>
+              <span>最近</span>
+            </template>
+
+            <template #addonAfter>
+              <a-select
+                v-model:value="currentJobInfo.retentionPolicy.code"
+                :options="retentionPolicyOptions"
+              />
+            </template>
+          </a-input>
+        </a-form-item>
       </template>
 
       <template v-else-if="currentStep == 1">
@@ -225,7 +244,11 @@ const emptyJobInfo = {
   },
   scheduleType: {
     code: 'CRON'
-  }
+  },
+  retentionPolicy: {
+    code: 'RECENT_COUNT'
+  },
+  retentionValue: 300
 }
 
 const emit = defineEmits(['onSubmitSuccess'])
@@ -234,6 +257,7 @@ const scheduleTypeOptions = ref([])
 const executeModeOptions = ref([])
 const jobTypeOptions = ref([])
 const scriptTypeOptions = ref([])
+const retentionPolicyOptions = ref([])
 const title = ref('')
 const saveMode = ref('')
 const formRef = ref()
@@ -294,6 +318,8 @@ const onSubmit = async () => {
       scheduleType: currentJobInfo.scheduleType.code,
       jobType: currentJobInfo.jobType.code,
       scriptType: currentJobInfo.scriptType.code,
+      retentionPolicy: currentJobInfo.retentionPolicy.code,
+      retentionValue: currentJobInfo.retentionValue,
       appCode: currentJobInfo.appCode,
       enable: false
     })
@@ -304,6 +330,8 @@ const onSubmit = async () => {
       scheduleType: currentJobInfo.scheduleType.code,
       jobType: currentJobInfo.jobType.code,
       scriptType: currentJobInfo.scriptType.code,
+      retentionPolicy: currentJobInfo.retentionPolicy.code,
+      retentionValue: currentJobInfo.retentionValue,
       jobId: currentJobInfo.id
     })
   }
@@ -320,7 +348,8 @@ const fetchMetadatas = async () => {
       'ExecuteModeEnum',
       'ScriptTypeEnum',
       'NotifyChannelEnum',
-      'NotifySceneEnum'
+      'NotifySceneEnum',
+      'RetentionPolicyEnum'
     ]
   })
   const options = buildMetadataOptions(mates)
@@ -328,6 +357,12 @@ const fetchMetadatas = async () => {
   executeModeOptions.value = options['ExecuteModeEnum']
   jobTypeOptions.value = options['JobTypeEnum']
   scriptTypeOptions.value = options['ScriptTypeEnum']
+  retentionPolicyOptions.value = options['RetentionPolicyEnum'].map((item) => {
+    return {
+      label: item.label.replace('最近N', ''),
+      value: item.value
+    }
+  })
 }
 
 const fetchAllOptions = async () => {
