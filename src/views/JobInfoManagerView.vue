@@ -223,14 +223,26 @@ const showDeleteConfirm = (record) => {
 }
 
 const handleSwitchEnable = async (record) => {
-  await switchEnable({
-    jobId: record.id,
-    enabled: !record.enabled
-  })
-  run({
-    ...lastQueryParam,
-    pageNo: pagination.value.current,
-    pageSize: pagination.value.pageSize
+  Modal.confirm({
+    title: `确认${!record.enabled ? '启用' : '禁用'}任务`,
+    content: h('div', [
+      h('span', `确定要${!record.enabled ? '启用' : '禁用'} `),
+      h('span', { class: 'font-semibold text-blue-500' }, record.jobName),
+      h('span', ' ?')
+    ]),
+    okText: '确定',
+    cancelText: '取消',
+    onOk: async () => {
+      await switchEnable({
+        jobId: record.id,
+        enabled: !record.enabled
+      })
+      run({
+        ...lastQueryParam,
+        pageNo: pagination.value.current,
+        pageSize: pagination.value.pageSize
+      })
+    }
   })
 }
 

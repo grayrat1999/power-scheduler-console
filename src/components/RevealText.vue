@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center space-x-2">
-    <a-typography-text copyable>
+    <a-typography-text :copyable="showSecret">
       {{ showSecret ? value : MASKED_TEXT }}
     </a-typography-text>
     <eye-outlined
@@ -20,7 +20,7 @@
 import { ref } from 'vue'
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons-vue'
 
-const MASKED_TEXT = '*'.repeat(42)
+const MASKED_TEXT = '*'.repeat(44)
 
 defineProps({
   value: {

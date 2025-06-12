@@ -7,7 +7,7 @@
         <span>吗？</span>
       </a-col>
     </a-row>
-    <a-row class="mt-4">
+    <a-row class="mt-4" v-if="currentJobInfo.executeMode.code === 'SINGLE'">
       <a-col :span="6">指定机器</a-col>
       <a-col :span="18">
         <a-select class="w-full" v-model:value="selectedWorker" :options="workerOptions">

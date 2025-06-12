@@ -122,10 +122,18 @@
                       异常信息
                     </div>
                   </a-menu-item>
-                  <a-menu-item v-if="record.jobStatus.code == 'FAILED'">
+                  <a-menu-item
+                    v-if="['SUCCESS', 'FAILED', 'CANCELED'].includes(record.jobStatus.code)"
+                  >
                     <div class="text-blue-500" @click="handleReattemptJob(record)">重跑任务</div>
                   </a-menu-item>
-                  <a-menu-item v-if="record.jobStatus.code == 'PROCESSING'">
+                  <a-menu-item
+                    v-if="
+                      ['WAITING_DISPATCH', 'DISPATCHING', 'PENDING', 'PROCESSING'].includes(
+                        record.jobStatus.code
+                      )
+                    "
+                  >
                     <div class="text-blue-500" @click="handleTerminateJob(record)">终止任务</div>
                   </a-menu-item>
                 </a-menu>
@@ -142,8 +150,8 @@
 </template>
 
 <script setup>
-import { message } from 'ant-design-vue'
-import { reactive, ref, onMounted } from 'vue'
+import { Modal, message } from 'ant-design-vue'
+import { reactive, ref, h, onMounted } from 'vue'
 
 import { listAppGroup } from '@/service/api/appGroupApi'
 import { listJobInstance, terminate, reattempt } from '@/service/api/jobInstanceApi'
@@ -205,7 +213,7 @@ const { run, loading, current, pagination, pageSize } = requestForPage(
   (data) => {
     let content = data.content
     for (let item of content) {
-      item.showMoreAction = ['PROCESSING', 'FAILED'].includes(item.jobStatus.code)
+      item.showMoreAction = item.jobStatus.code != 'WAITING_SCHEDULE'
     }
     dataSource.value = content
   }
@@ -280,13 +288,39 @@ const fetchAppGroup = async (searchText) => {
 }
 
 const handleReattemptJob = async (record) => {
-  await reattempt({ jobInstanceId: record.id })
-  message.success('操作成功')
-  await fetchJobInstance()
+  Modal.confirm({
+    title: `确认重跑任务`,
+    content: h('div', [
+      h('span', `确定要重跑 `),
+      h('span', { class: 'font-semibold text-blue-500' }, record.jobName),
+      h('span', ' ?')
+    ]),
+    okText: '确定',
+    cancelText: '取消',
+    onOk: async () => {
+      await reattempt({ jobInstanceId: record.id })
+      message.success('操作成功')
+      fetchJobInstance()
+    }
+  })
 }
 
 const handleTerminateJob = async (record) => {
-  await terminate({ jobInstanceId: record.id })
+  Modal.confirm({
+    title: `确认终止任务`,
+    content: h('div', [
+      h('span', `确定要终止 `),
+      h('span', { class: 'font-semibold text-blue-500' }, record.jobName),
+      h('span', ' ?')
+    ]),
+    okText: '确定',
+    cancelText: '取消',
+    onOk: async () => {
+      await terminate({ jobInstanceId: record.id })
+      message.success('操作成功')
+      fetchJobInstance()
+    }
+  })
 }
 
 const initOptions = async () => {
