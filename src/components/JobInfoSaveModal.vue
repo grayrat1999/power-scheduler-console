@@ -181,11 +181,45 @@
           </a-form-item>
 
           <a-form-item
-            label="失败重试间隔(秒)"
+            label="失败重试间隔"
             name="attemptInterval"
             :rules="[{ required: true, message: 'Please Input attemptInterval!' }]"
           >
-            <a-input-number class="w-full" v-model:value="currentJobInfo.attemptInterval" min="0" />
+            <a-input-number class="w-full" v-model:value="currentJobInfo.attemptInterval" min="0">
+              <template #addonAfter>
+                <span>秒</span>
+              </template>
+            </a-input-number>
+          </a-form-item>
+
+          <a-form-item
+            label="子任务失败重试次数"
+            :name="['taskMaxAttemptCnt']"
+            v-if="currentJobInfo.executeMode.code !== 'SINGLE'"
+            :rules="[{ required: true, message: 'Please Input taskMaxAttemptCnt!' }]"
+          >
+            <a-input-number
+              class="w-full"
+              v-model:value="currentJobInfo.taskMaxAttemptCnt"
+              min="0"
+            />
+          </a-form-item>
+
+          <a-form-item
+            label="子任务失败重试间隔"
+            name="taskAttemptInterval"
+            v-if="currentJobInfo.executeMode.code !== 'SINGLE'"
+            :rules="[{ required: true, message: 'Please Input taskAttemptInterval!' }]"
+          >
+            <a-input-number
+              class="w-full"
+              v-model:value="currentJobInfo.taskAttemptInterval"
+              min="0"
+            >
+              <template #addonAfter>
+                <span>秒</span>
+              </template>
+            </a-input-number>
           </a-form-item>
         </div>
       </template>
@@ -233,6 +267,8 @@ const emptyJobInfo = {
   priority: 2,
   maxAttemptCnt: 0,
   attemptInterval: 15,
+  taskMaxAttemptCnt: 0,
+  taskAttemptInterval: 15,
   jobType: {
     code: 'JAVA'
   },

@@ -72,9 +72,11 @@ declare namespace API {
     maxConcurrentNum: number;
     scriptType?: 'BASH' | 'CMD' | 'PYTHON' | 'POWER_SHELL';
     scriptCode?: string;
-    maxAttemptCnt: number;
     priority: number;
+    maxAttemptCnt: number;
     attemptInterval: number;
+    taskMaxAttemptCnt?: number;
+    taskAttemptInterval?: number;
     retentionPolicy: 'RECENT_DAYS' | 'RECENT_COUNT';
     retentionValue: number;
   };
@@ -97,7 +99,11 @@ declare namespace API {
     scriptCode?: string;
     maxAttemptCnt?: number;
     attemptInterval?: number;
+    taskMaxAttemptCnt?: number;
+    taskAttemptInterval?: number;
     priority?: number;
+    retentionPolicy?: RetentionPolicyDTO;
+    retentionValue?: number;
     createdBy?: string;
     createdAt?: string;
     updatedBy?: string;
@@ -117,9 +123,11 @@ declare namespace API {
     maxConcurrentNum: number;
     scriptType?: 'BASH' | 'CMD' | 'PYTHON' | 'POWER_SHELL';
     scriptCode?: string;
-    maxAttemptCnt: number;
     priority: number;
+    maxAttemptCnt: number;
     attemptInterval?: number;
+    taskMaxAttemptCnt?: number;
+    taskAttemptInterval?: number;
     retentionPolicy: 'RECENT_DAYS' | 'RECENT_COUNT';
     retentionValue: number;
   };
@@ -144,14 +152,9 @@ declare namespace API {
     scheduleConfigDesc?: string;
     processor?: string;
     executeMode?: ExecuteModeDTO;
-    executeParams?: string;
     nextScheduleAt?: string;
     enabled?: boolean;
-    maxConcurrentNum?: number;
     scriptType?: ScriptTypeDTO;
-    scriptCode?: string;
-    maxAttemptCnt?: number;
-    priority?: number;
     createdBy?: string;
     createdAt?: string;
     updatedBy?: string;
@@ -186,17 +189,20 @@ declare namespace API {
   type JobInstanceQueryRequestDTO = {
     pageNo: number;
     pageSize: number;
+    jobId?: number;
     jobInstanceId?: number;
     appCode?: string;
     jobName?: string;
     jobStatus?:
+      | 'WAITING_SCHEDULE'
       | 'WAITING_DISPATCH'
       | 'DISPATCHING'
       | 'PENDING'
       | 'PROCESSING'
       | 'FAILED'
       | 'SUCCESS'
-      | 'CANCELED';
+      | 'CANCELED'
+      | 'UNKNOWN';
     startAtRange?: string[];
     endAtRange?: string[];
   };
@@ -574,6 +580,11 @@ declare namespace API {
       message?: string;
       localizedMessage?: string;
     };
+  };
+
+  type RetentionPolicyDTO = {
+    code?: string;
+    label?: string;
   };
 
   type ScheduleTypeDTO = {
