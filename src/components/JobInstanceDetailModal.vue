@@ -215,6 +215,8 @@ const handleTableChange = (page, filters, sorter) => {
 const handleClose = () => {
   // 取消轮训
   cancel()
+  // 恢复默认的标签页
+  activeTagKey.value = 'basicInfo'
 }
 
 defineExpose({ openModal })
