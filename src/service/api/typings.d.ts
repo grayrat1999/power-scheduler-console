@@ -235,6 +235,22 @@ declare namespace API {
     updatedAt?: string;
   };
 
+  type JobProgressQueryRequestDTO = {
+    pageNo: number;
+    pageSize: number;
+    jobInstanceId: number;
+  };
+
+  type JobProgressQueryResponseDTO = {
+    taskId?: number;
+    taskName?: string;
+    jobInstanceId?: number;
+    taskStatus?: JobStatusDTO;
+    workerAddress?: string;
+    startAt?: string;
+    endAt?: string;
+  };
+
   type JobRunRequestDTO = {
     jobId: number;
     workerAddress?: string;
@@ -292,6 +308,14 @@ declare namespace API {
     totalPages: number;
     totalElements: number;
     content: JobInstanceQueryResponseDTO[];
+  };
+
+  type PageDTOJobProgressQueryResponseDTO = {
+    number: number;
+    size: number;
+    totalPages: number;
+    totalElements: number;
+    content: JobProgressQueryResponseDTO[];
   };
 
   type parseCronParams = {
@@ -522,6 +546,27 @@ declare namespace API {
 
   type ResponseWrapperPageDTOJobInstanceQueryResponseDTO = {
     data?: PageDTOJobInstanceQueryResponseDTO;
+    success: boolean;
+    code: string;
+    message: string;
+    cause?: {
+      stackTrace?: {
+        classLoaderName?: string;
+        moduleName?: string;
+        moduleVersion?: string;
+        methodName?: string;
+        fileName?: string;
+        lineNumber?: number;
+        className?: string;
+        nativeMethod?: boolean;
+      }[];
+      message?: string;
+      localizedMessage?: string;
+    };
+  };
+
+  type ResponseWrapperPageDTOJobProgressQueryResponseDTO = {
+    data?: PageDTOJobProgressQueryResponseDTO;
     success: boolean;
     code: string;
     message: string;

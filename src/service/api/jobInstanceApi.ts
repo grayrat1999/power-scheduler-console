@@ -47,6 +47,24 @@ export async function listJobInstance(
   });
 }
 
+/** 查询任务进度 POST /api/jobInstances/queryProgress */
+export async function queryProgress(
+  body: API.JobProgressQueryRequestDTO,
+  options?: { [key: string]: any },
+) {
+  return request<API.ResponseWrapperPageDTOJobProgressQueryResponseDTO>(
+    `/api/jobInstances/queryProgress`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: body,
+      ...(options || {}),
+    },
+  );
+}
+
 /** 重跑任务 POST /api/jobInstances/reattempt */
 export async function reattempt(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
