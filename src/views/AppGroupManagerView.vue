@@ -52,10 +52,10 @@ const columns = [
 
 const { run, loading, current, pageSize, pagination, handleTableChange } = requestForPage(
   async (params) => listAppGroup(params),
-  (data) => (dataSource.value = data.content),
   {
-    pageNo: 1,
-    pageSize: 1
+    onSuccess: (data) => {
+      dataSource.value = data.content
+    }
   }
 )
 

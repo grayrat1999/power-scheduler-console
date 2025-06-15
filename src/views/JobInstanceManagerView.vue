@@ -210,12 +210,14 @@ const dataSource = ref([])
 
 const { run, loading, current, pagination, pageSize } = requestForPage(
   async (params) => listJobInstance(params),
-  (data) => {
-    let content = data.content
-    for (let item of content) {
-      item.showMoreAction = item.jobStatus.code != 'WAITING_SCHEDULE'
+  {
+    onSuccess: (data) => {
+      let content = data.content
+      for (let item of content) {
+        item.showMoreAction = item.jobStatus.code != 'WAITING_SCHEDULE'
+      }
+      dataSource.value = content
     }
-    dataSource.value = content
   }
 )
 

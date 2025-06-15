@@ -1,5 +1,11 @@
 <template>
-  <a-drawer v-model:open="visibility" title="任务详情" size="large" placement="right">
+  <a-drawer
+    v-model:open="visibility"
+    title="任务详情"
+    size="large"
+    placement="right"
+    @close="handleClose"
+  >
     <a-tabs v-model:activeKey="activeTagKey" type="card" @change="handleChangeTag">
       <a-tab-pane key="basicInfo" tab="基本信息">
         <div class="h-[350px] leading-normal">
@@ -177,16 +183,21 @@ const openModal = async (jobInstanceId) => {
   Object.assign(currentJobInstanceDetail, queryResult)
 }
 
-const { run, loading, current, pagination, pageSize } = requestForPage(
+const { run, loading, current, pagination, pageSize, cancel } = requestForPage(
   async (params) => queryProgress(params),
-  (data) => {
-    dataSource.value = data.content
+  {
+    onSuccess: (data) => {
+      dataSource.value = data.content
+    },
+    pollingInterval: 5000
   }
 )
 
 const handleChangeTag = (activeKey) => {
   if (activeKey === 'progressInfo') {
     run({ jobInstanceId: currentJobInstanceDetail.id })
+  } else {
+    cancel()
   }
 }
 
@@ -199,6 +210,11 @@ const handleTableChange = (page, filters, sorter) => {
     sortOrder: sorter.order,
     ...filters
   })
+}
+
+const handleClose = () => {
+  // 取消轮训
+  cancel()
 }
 
 defineExpose({ openModal })

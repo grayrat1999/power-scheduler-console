@@ -164,15 +164,9 @@ const query = async (params) => {
   return listJobInfo(params)
 }
 
-const { run, loading, current, pageSize, pagination, handleTableChange } = requestForPage(
-  query,
-  (data) => (dataSource.value = data.content),
-  {
-    appCode: 'sample-job-springboot',
-    pageNo: 1,
-    pageSize: 1
-  }
-)
+const { run, loading, current, pageSize, pagination, handleTableChange } = requestForPage(query, {
+  onSuccess: (data) => (dataSource.value = data.content)
+})
 
 const fetchJobInfo = () => {
   run({

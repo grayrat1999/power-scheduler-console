@@ -8,19 +8,21 @@ interface AntdPaginationQueryResult<T> extends PaginationQueryResult<T, any> {
 
 export default function requestForPage<T>(
   requestFunction: (param: any) => Promise<T>,
-  onSuccess: (value: T) => void,
-  defaultParams: any
+  options: any
 ): AntdPaginationQueryResult<T> {
-  const result: PaginationQueryResult<T, any> = usePagination(requestFunction, {
-    defaultParams,
+  const defaultOptions = {
     manual: true,
     pagination: {
       currentKey: 'pageNo',
       pageSizeKey: 'pageSize',
       totalKey: 'totalElements',
       totalPageKey: 'totalPages'
-    },
-    onSuccess: onSuccess
+    }
+  }
+
+  const result: PaginationQueryResult<T, any> = usePagination(requestFunction, {
+    ...options,
+    ...defaultOptions
   })
 
   const { total, current, pageSize, run } = result
