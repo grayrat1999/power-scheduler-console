@@ -67,7 +67,7 @@ declare namespace API {
     scheduleConfig?: string;
     jobType: 'JAVA' | 'SCRIPT';
     processor?: string;
-    executeMode: 'SINGLE' | 'BROADCAST' | 'MAP_REDUCE';
+    executeMode: 'SINGLE' | 'BROADCAST' | 'MAP' | 'MAP_REDUCE';
     executeParams?: string;
     maxConcurrentNum: number;
     scriptType?: 'BASH' | 'CMD' | 'PYTHON' | 'POWER_SHELL';
@@ -118,7 +118,7 @@ declare namespace API {
     scheduleConfig?: string;
     jobType: 'JAVA' | 'SCRIPT';
     processor?: string;
-    executeMode: 'SINGLE' | 'BROADCAST' | 'MAP_REDUCE';
+    executeMode: 'SINGLE' | 'BROADCAST' | 'MAP' | 'MAP_REDUCE';
     executeParams?: string;
     maxConcurrentNum: number;
     scriptType?: 'BASH' | 'CMD' | 'PYTHON' | 'POWER_SHELL';

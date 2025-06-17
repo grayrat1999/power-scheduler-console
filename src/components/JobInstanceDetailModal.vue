@@ -203,7 +203,7 @@ const handleChangeTag = (activeKey) => {
 
 const handleTableChange = (page, filters, sorter) => {
   run({
-    jobInstanceId,
+    jobInstanceId: currentJobInstanceDetail.id,
     pageNo: page?.current,
     pageSize: page.pageSize,
     sortField: sorter.field,
