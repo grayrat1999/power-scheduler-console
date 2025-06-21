@@ -17,6 +17,21 @@ export async function addAppGroup(
   });
 }
 
+/** 编辑应用分组 POST /api/appGroups/edit */
+export async function editAppGroup(
+  body: API.AppGroupEditRequestDTO,
+  options?: { [key: string]: any },
+) {
+  return request<API.ResponseWrapperUnit>(`/api/appGroups/edit`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** 查询应用分组 POST /api/appGroups/list */
 export async function listAppGroup(
   body: API.AppGroupQueryRequestDTO,

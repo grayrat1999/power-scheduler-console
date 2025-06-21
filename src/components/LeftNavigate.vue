@@ -4,7 +4,6 @@
     v-model:selectedKeys="selectedKeys"
     class="w-full h-full"
     mode="inline"
-    theme="dark"
     :items="items"
     @click="handleClick"
     @openChange="handleOpenChange"
@@ -22,7 +21,9 @@ import {
   FunctionOutlined,
   UsergroupAddOutlined,
   BellOutlined,
-  MailOutlined
+  MailOutlined,
+  SettingOutlined,
+  ClusterOutlined
 } from '@ant-design/icons-vue'
 
 const router = useRouter()
@@ -39,9 +40,12 @@ function getItem(label, key, icon, children, type) {
 }
 const items = reactive([
   getItem('首页', 'index', () => h(DashboardOutlined)),
-  getItem('应用管理', 'groupManager', () => h(AppstoreOutlined)),
   getItem('任务管理', 'jobManager', () => h(FunctionOutlined)),
-  getItem('执行记录', 'jobInstanceManager', () => h(CalendarOutlined))
+  getItem('执行记录', 'jobInstanceManager', () => h(CalendarOutlined)),
+  getItem('系统管理', 'systemManager', () => h(SettingOutlined), [
+    getItem('命名空间', 'namespaceManager', () => h(ClusterOutlined)),
+    getItem('应用分组', 'groupManager', () => h(AppstoreOutlined))
+  ])
 ])
 
 const handleClick = (clickItem) => {

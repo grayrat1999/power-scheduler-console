@@ -1,19 +1,20 @@
 <template>
   <a-modal v-model:open="visibility" :title="title" @ok="handleSave">
-    <a-form name="basic" ref="formRef" :model="currentAppGroup">
+    <a-form name="basic" ref="formRef" :model="currentNamespace">
       <a-form-item
-        label="应用编码"
+        label="命名空间编码"
         name="code"
+        :disabled="saveMode === 'edit'"
         :rules="[{ required: true, message: 'Please input code' }]"
       >
-        <a-input v-model:value="currentAppGroup.code" :disabled="saveMode == 'edit'" />
+        <a-input v-model:value="currentNamespace.code" :disabled="saveMode == 'edit'" />
       </a-form-item>
       <a-form-item
-        label="应用名称"
+        label="命名空间名称"
         name="name"
         :rules="[{ required: true, message: 'Please input name' }]"
       >
-        <a-input v-model:value="currentAppGroup.name" />
+        <a-input v-model:value="currentNamespace.name" />
       </a-form-item>
     </a-form>
   </a-modal>
@@ -22,42 +23,39 @@
 <script setup>
 import { message } from 'ant-design-vue'
 import { ref, reactive } from 'vue'
-import { addAppGroup, editAppGroup } from '@/service/api/appGroupApi'
-import { globalStore } from '@/stores/global'
+import { addNamespace, editNamespace } from '@/service/api/namespaceApi'
 
 const emit = defineEmits(['onSubmitSuccess'])
-const emptyAppGroup = {
+const emptyNamespace = {
   id: null,
-  namespaceCode: '',
   code: '',
   name: ''
 }
 
-const title = ref('新建应用')
+const title = ref('新建命名空间')
 const formRef = ref()
 const saveMode = ref('')
 const visibility = ref(false)
-const currentAppGroup = reactive({})
+const currentNamespace = reactive({})
 
-const openModal = (appGroup) => {
-  if (appGroup) {
+const openModal = (namespace) => {
+  if (namespace) {
     saveMode.value = 'edit'
-    title.value = '编辑应用'
-    Object.assign(currentAppGroup, appGroup)
+    title.value = '编辑命名空间'
+    Object.assign(currentNamespace, namespace)
   } else {
     saveMode.value = 'add'
-    title.value = '新建应用'
-    Object.assign(currentAppGroup, emptyAppGroup)
+    title.value = '新建命名空间'
+    Object.assign(currentNamespace, emptyNamespace)
   }
   visibility.value = true
 }
 
 const handleSave = async () => {
   if (saveMode.value === 'add') {
-    const namespaceCode = globalStore.getNamespaceCode()
-    await addAppGroup({ ...currentAppGroup, namespaceCode })
+    await addNamespace({ ...currentNamespace })
   } else {
-    await editAppGroup(currentAppGroup)
+    await editNamespace(currentNamespace)
   }
   visibility.value = false
   formRef.value.resetFields()

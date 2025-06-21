@@ -23,32 +23,27 @@
       </a-table>
     </div>
 
-    <AppGroupSaveModal ref="appGroupSaveModalRef" @onSubmitSuccess="onSubmitSuccess" />
+    <NamespaceSaveModal ref="namespaceSaveModalRef" @onSubmitSuccess="onSubmitSuccess" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { listAppGroup } from '@/service/api/appGroupApi'
+import { listNamespace } from '@/service/api/namespaceApi'
 import requestForPage from '@/utils/pageRequest'
-import AppGroupSaveModal from '@/components/AppGroupSaveModal.vue'
+import NamespaceSaveModal from '@/components/NamespaceSaveModal.vue'
 import RevealText from '@/components/RevealText.vue'
-import { globalStore } from '@/stores/global'
 
-const appGroupSaveModalRef = ref()
+const namespaceSaveModalRef = ref()
 const dataSource = ref([])
 const columns = [
   {
-    title: '应用名称',
+    title: '名称',
     dataIndex: 'name'
   },
   {
-    title: 'appCode',
+    title: '编码',
     dataIndex: 'code'
-  },
-  {
-    title: 'appSecret',
-    dataIndex: 'secret'
   },
   {
     title: '创建时间',
@@ -61,7 +56,7 @@ const columns = [
 ]
 
 const { run, loading, current, pageSize, pagination, handleTableChange } = requestForPage(
-  async (params) => listAppGroup(params),
+  async (params) => listNamespace(params),
   {
     onSuccess: (data) => {
       dataSource.value = data.content
@@ -70,16 +65,14 @@ const { run, loading, current, pageSize, pagination, handleTableChange } = reque
 )
 
 const openSaveModel = (record) => {
-  appGroupSaveModalRef.value.openModal(record)
+  namespaceSaveModalRef.value.openModal(record)
 }
 
 const onSubmitSuccess = async () => {
-  const namespaceCode = globalStore.getNamespaceCode()
-  run({ namespaceCode, pageNo: current.value, pageSize: pageSize.value })
+  run({ pageNo: current.value, pageSize: pageSize.value })
 }
 
 onMounted(() => {
-  const namespaceCode = globalStore.getNamespaceCode()
-  run({ namespaceCode, pageNo: current.value, pageSize: pageSize.value })
+  run({ pageNo: current.value, pageSize: pageSize.value })
 })
 </script>

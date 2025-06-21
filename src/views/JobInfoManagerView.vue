@@ -11,7 +11,7 @@
               :options="appGroupOptions"
               :filterOption="false"
               @change="handleAppGroupChange"
-              @search="searchAppGroup"
+              @search="fetchAppGroupOptions"
             ></a-select>
           </a-form-item>
         </a-col>
@@ -117,6 +117,7 @@ import { listJobInfo, removeJobInfo, switchEnable } from '@/service/api/jobInfoA
 
 import JobRunOnceModal from '@/components/JobRunOnceModal.vue'
 import JobInfoSaveModal from '@/components/JobInfoSaveModal.vue'
+import { globalStore } from '@/stores/global'
 
 const columns = [
   {
@@ -152,7 +153,6 @@ const columns = [
 ]
 
 const [saveModelRef, jobRunOnceModalRef] = [ref(), ref()]
-const currentAppCode = ref('')
 const appGroupOptions = ref([])
 const queryFormState = reactive({})
 const dataSource = ref([])
@@ -160,7 +160,6 @@ let lastQueryParam = null
 
 const query = async (params) => {
   lastQueryParam = params
-  currentAppCode.value = params.appCode
   return listJobInfo(params)
 }
 
@@ -169,25 +168,30 @@ const { run, loading, current, pageSize, pagination, handleTableChange } = reque
 })
 
 const fetchJobInfo = () => {
+  const namespaceCode = globalStore.getNamespaceCode()
   run({
     ...queryFormState,
+    namespaceCode,
     pageNo: current.value,
     pageSize: pageSize.value
   })
 }
 
 const showSaveModel = (record) => {
-  if (!record && !currentAppCode.value) {
+  const cachedAppCode = globalStore.getAppCode()
+  if (!record && !cachedAppCode) {
     message.error('请先选择应用')
     return
   }
-  const appCode = record ? record.appCode : currentAppCode.value
+  const appCode = record ? record.appCode : cachedAppCode
   saveModelRef.value.openModal(appCode, record?.id)
 }
 
 const onSubmitSuccess = async () => {
+  const namespaceCode = globalStore.getNamespaceCode()
   run({
     ...lastQueryParam,
+    namespaceCode,
     pageNo: pagination.value.current,
     pageSize: pagination.value.pageSize
   })
@@ -207,8 +211,10 @@ const showDeleteConfirm = (record) => {
       await removeJobInfo({
         jobId: record.id
       })
+      const namespaceCode = globalStore.getNamespaceCode()
       run({
         ...lastQueryParam,
+        namespaceCode,
         pageNo: pagination.value.current,
         pageSize: pagination.value.pageSize
       })
@@ -231,8 +237,10 @@ const handleSwitchEnable = async (record) => {
         jobId: record.id,
         enabled: !record.enabled
       })
+      const namespaceCode = globalStore.getNamespaceCode()
       run({
         ...lastQueryParam,
+        namespaceCode,
         pageNo: pagination.value.current,
         pageSize: pagination.value.pageSize
       })
@@ -240,8 +248,10 @@ const handleSwitchEnable = async (record) => {
   })
 }
 
-const searchAppGroup = async (searchText) => {
+const fetchAppGroupOptions = async (searchText) => {
+  const namespaceCode = globalStore.getNamespaceCode()
   let appGroupPage = await listAppGroup({
+    namespaceCode,
     appCode: searchText,
     pageNo: 1,
     pageSize: 10
@@ -259,8 +269,10 @@ const searchAppGroup = async (searchText) => {
 }
 
 const handleAppGroupChange = (value) => {
-  localStorage.setItem('selectedAppCode', value || '')
+  globalStore.setAppCode(value)
+  const namespaceCode = globalStore.getNamespaceCode()
   run({
+    namespaceCode,
     appCode: value,
     pageNo: 1,
     pageSize: pageSize.value
@@ -268,12 +280,14 @@ const handleAppGroupChange = (value) => {
 }
 
 onMounted(() => {
-  searchAppGroup()
-  const selectedAppCode = localStorage.getItem('selectedAppCode')
-  queryFormState.appCode = selectedAppCode
-  currentAppCode.value = selectedAppCode
+  fetchAppGroupOptions()
+  const namespaceCode = globalStore.getNamespaceCode()
+  const appCode = globalStore.getAppCode()
+  queryFormState.appCode = appCode
   run({
     ...queryFormState,
+    appCode,
+    namespaceCode,
     pageNo: current.value,
     pageSize: pageSize.value
   })

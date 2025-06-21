@@ -1,17 +1,26 @@
 declare namespace API {
   type AppGroupAddRequestDTO = {
+    namespaceCode?: string;
     code?: string;
+    name?: string;
+  };
+
+  type AppGroupEditRequestDTO = {
+    id: number;
     name?: string;
   };
 
   type AppGroupQueryRequestDTO = {
     pageNo: number;
     pageSize: number;
+    namespaceCode?: string;
     code?: string;
     name?: string;
   };
 
   type AppGroupQueryResponseDTO = {
+    id?: number;
+    namespaceCode?: string;
     code?: string;
     name?: string;
     secret?: string;
@@ -24,6 +33,11 @@ declare namespace API {
     times: number;
   };
 
+  type DashboardBasicInfoQueryRequestDTO = {
+    namespaceCode?: string;
+    appCode?: string;
+  };
+
   type DashboardBasicInfoQueryResponseDTO = {
     onlineWorkerCount: number;
     enabledJobInfoCount: number;
@@ -32,6 +46,7 @@ declare namespace API {
   };
 
   type DashboardStatisticsInfoQueryRequestDTO = {
+    namespaceCode?: string;
     appCode?: string;
     scheduleAtRange?: string[];
   };
@@ -60,6 +75,7 @@ declare namespace API {
   };
 
   type JobInfoAddRequestDTO = {
+    namespaceCode?: string;
     appCode?: string;
     jobName?: string;
     jobDesc?: string;
@@ -135,6 +151,7 @@ declare namespace API {
   type JobInfoQueryRequestDTO = {
     pageNo: number;
     pageSize: number;
+    namespaceCode?: string;
     appCode?: string;
     jobName?: string;
     processor?: string;
@@ -142,6 +159,7 @@ declare namespace API {
 
   type JobInfoQueryResponseDTO = {
     id?: number;
+    namespaceCode?: string;
     appCode?: string;
     appName?: string;
     jobName?: string;
@@ -189,6 +207,7 @@ declare namespace API {
   type JobInstanceQueryRequestDTO = {
     pageNo: number;
     pageSize: number;
+    namespaceCode?: string;
     jobId?: number;
     jobInstanceId?: number;
     appCode?: string;
@@ -277,13 +296,42 @@ declare namespace API {
     metadataCodes: string[];
   };
 
+  type listNamespaceParams = {
+    param: NamespaceQueryRequestDTO;
+  };
+
   type listWorkerParams = {
-    appCode: string;
+    param?: WorkerQueryRequestDTO;
   };
 
   type MetadataDTO = {
     code?: string;
     label?: string;
+  };
+
+  type NamespaceAddRequestDTO = {
+    code?: string;
+    name?: string;
+    description?: string;
+  };
+
+  type NamespaceEditRequestDTO = {
+    id: number;
+    name?: string;
+    description?: string;
+  };
+
+  type NamespaceQueryRequestDTO = {
+    pageNo: number;
+    pageSize: number;
+    name?: string;
+  };
+
+  type NamespaceQueryResponseDTO = {
+    id?: number;
+    code?: string;
+    name?: string;
+    description?: string;
   };
 
   type PageDTOAppGroupQueryResponseDTO = {
@@ -318,12 +366,20 @@ declare namespace API {
     content: JobProgressQueryResponseDTO[];
   };
 
+  type PageDTONamespaceQueryResponseDTO = {
+    number: number;
+    size: number;
+    totalPages: number;
+    totalElements: number;
+    content: NamespaceQueryResponseDTO[];
+  };
+
   type parseCronParams = {
     param?: CronParseRequestDTO;
   };
 
   type queryBasicInfoParams = {
-    appCode?: string;
+    param?: DashboardBasicInfoQueryRequestDTO;
   };
 
   type reattemptParams = {
@@ -586,6 +642,27 @@ declare namespace API {
     };
   };
 
+  type ResponseWrapperPageDTONamespaceQueryResponseDTO = {
+    data?: PageDTONamespaceQueryResponseDTO;
+    success: boolean;
+    code: string;
+    message: string;
+    cause?: {
+      stackTrace?: {
+        classLoaderName?: string;
+        moduleName?: string;
+        moduleVersion?: string;
+        methodName?: string;
+        fileName?: string;
+        lineNumber?: number;
+        className?: string;
+        nativeMethod?: boolean;
+      }[];
+      message?: string;
+      localizedMessage?: string;
+    };
+  };
+
   type ResponseWrapperString = {
     data?: string;
     success: boolean;
@@ -646,7 +723,13 @@ declare namespace API {
     jobInstanceId: number;
   };
 
+  type WorkerQueryRequestDTO = {
+    namespaceCode?: string;
+    appCode?: string;
+  };
+
   type WorkerQueryResponseDTO = {
+    namespaceCode?: string;
     appCode?: string;
     host?: string;
     port?: number;

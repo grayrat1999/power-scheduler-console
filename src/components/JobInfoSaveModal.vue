@@ -248,6 +248,7 @@ import { buildMetadataOptions } from '@/utils/metadataUtils'
 import { listMetadata } from '@/service/api/metadataApi'
 import { parseCron } from '@/service/api/toolApi'
 import { getJobInfo, addJobInfo, editJobInfo } from '@/service/api/jobInfoApi'
+import { globalStore } from '@/stores/global'
 
 const steps = [
   {
@@ -348,8 +349,10 @@ const onSubmit = async () => {
     currentJobInfo.jobHandler = 'scriptHandler'
   }
   if (saveMode.value == 'add') {
+    const namespaceCode = globalStore.getNamespaceCode()
     await addJobInfo({
       ...currentJobInfo,
+      namespaceCode,
       executeMode: currentJobInfo.executeMode.code,
       scheduleType: currentJobInfo.scheduleType.code,
       jobType: currentJobInfo.jobType.code,

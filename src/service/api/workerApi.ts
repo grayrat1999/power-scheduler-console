@@ -12,6 +12,8 @@ export async function listWorker(
     method: 'GET',
     params: {
       ...params,
+      param: undefined,
+      ...params['param'],
     },
     ...(options || {}),
   });

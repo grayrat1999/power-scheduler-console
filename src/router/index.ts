@@ -4,6 +4,7 @@ import DashboardView from '@/views/DashboardView.vue'
 import JobInfoManagerView from '@/views/JobInfoManagerView.vue'
 import AppManagerView from '@/views/AppGroupManagerView.vue'
 import JobInstanceManagerView from '@/views/JobInstanceManagerView.vue'
+import NamespaceManagerView from '@/views/NamespaceManagerView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,11 +19,6 @@ const router = createRouter({
       component: DashboardView
     },
     {
-      path: '/groupManager',
-      name: '应用管理',
-      component: AppManagerView
-    },
-    {
       path: '/jobManager',
       name: '任务管理',
       component: JobInfoManagerView
@@ -31,6 +27,16 @@ const router = createRouter({
       path: '/jobInstanceManager',
       name: '任务记录',
       component: JobInstanceManagerView
+    },
+    {
+      path: '/groupManager',
+      name: '应用管理',
+      component: AppManagerView
+    },
+    {
+      path: '/namespaceManager',
+      name: '命名空间管理',
+      component: NamespaceManagerView
     }
   ]
 })

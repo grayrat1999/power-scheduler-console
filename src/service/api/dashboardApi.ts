@@ -14,6 +14,8 @@ export async function queryBasicInfo(
       method: 'GET',
       params: {
         ...params,
+        param: undefined,
+        ...params['param'],
       },
       ...(options || {}),
     },

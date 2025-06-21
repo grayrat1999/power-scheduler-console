@@ -77,6 +77,7 @@ import { reactive, ref, h, onMounted } from 'vue'
 import { listAppGroup } from '@/service/api/appGroupApi'
 import { queryBasicInfo, queryStatisticsInfo } from '@/service/api/dashboardApi'
 import dayjs from 'dayjs'
+import { globalStore } from '@/stores/global'
 
 const labelCss = 'text-gray-500'
 const valueCss = 'text-blue-500 font-semibold text-2xl'
@@ -136,7 +137,9 @@ const calculateSelectedTimeRange = (timeRangeOptionValue) => {
 }
 
 const fetchAppGroupOptions = async (searchText) => {
+  const namespaceCode = globalStore.getNamespaceCode()
   let appGroupPage = await listAppGroup({
+    namespaceCode,
     appCode: searchText,
     pageNo: 1,
     pageSize: 10
@@ -154,12 +157,18 @@ const fetchAppGroupOptions = async (searchText) => {
 }
 
 const fetchBasicInfo = async (appCode) => {
-  const basicInfoQueryResult = await queryBasicInfo({ appCode })
+  const namespaceCode = globalStore.getNamespaceCode()
+  const basicInfoQueryResult = await queryBasicInfo({ namespaceCode, appCode })
   Object.assign(basicInfo, basicInfoQueryResult)
 }
 
 const fetchStatisticsInfo = async (appCode, scheduleAtRange) => {
-  const statisticsInfoQueryResult = await queryStatisticsInfo({ appCode, scheduleAtRange })
+  const namespaceCode = globalStore.getNamespaceCode()
+  const statisticsInfoQueryResult = await queryStatisticsInfo({
+    namespaceCode,
+    appCode,
+    scheduleAtRange
+  })
   Object.assign(statisticsInfo, statisticsInfoQueryResult)
 }
 

@@ -70,6 +70,7 @@ const openModal = async (record) => {
   currentJobInfo.value = record
   executeParams.value = record.executeParams
   const workerAddressList = await listWorker({
+    namespaceCode: record.namespaceCode,
     appCode: record.appCode
   })
   workerOptions.value = workerAddressList.map((item) => {

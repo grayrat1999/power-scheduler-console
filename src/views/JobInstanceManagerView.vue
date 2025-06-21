@@ -17,7 +17,7 @@
               :options="appGroupOptions"
               :filterOption="false"
               @change="handleJobGroupChange"
-              @search="fetchAppGroup"
+              @search="fetchAppGroupOptions"
             />
           </a-form-item>
         </a-col>
@@ -161,6 +161,7 @@ import { buildMetadataOptions } from '@/utils/metadataUtils'
 import requestForPage from '@/utils/pageRequest'
 import JobInstanceDetailModal from '@/components/JobInstanceDetailModal.vue'
 import JobInstanceMessageModal from '@/components/JobInstanceMessageModal.vue'
+import { globalStore } from '@/stores/global'
 
 const [jobInstanceMessageModalRef, jobInstanceDetailModalRef] = [ref(), ref()]
 
@@ -222,8 +223,10 @@ const { run, loading, current, pagination, pageSize } = requestForPage(
 )
 
 const handleTableChange = (page, filters, sorter) => {
+  const namespaceCode = globalStore.getNamespaceCode()
   run({
     ...queryFormState,
+    namespaceCode,
     pageNo: page?.current,
     pageSize: page.pageSize,
     sortField: sorter.field,
@@ -235,7 +238,9 @@ const handleTableChange = (page, filters, sorter) => {
 const fetchJobInstance = async () => {
   const { appCode, jobId, jobInstanceId, jobStatus, processor, startAtRange, endAtRange } =
     queryFormState
+  const namespaceCode = globalStore.getNamespaceCode()
   run({
+    namespaceCode,
     appCode,
     jobId,
     jobInstanceId,
@@ -253,13 +258,15 @@ const onFinish = (values) => {
 }
 
 const handleJobGroupChange = (value) => {
-  localStorage.setItem('selectedAppCode', value)
+  globalStore.setAppCode(value)
   fetchJobInfo(value)
 }
 
 const fetchJobInfo = async (appCode) => {
+  const namespaceCode = globalStore.getNamespaceCode()
   let jobInfoPage = await listJobInfo({
-    appCode: appCode,
+    namespaceCode,
+    appCode,
     pageNo: 1,
     pageSize: 10
   })
@@ -271,8 +278,10 @@ const fetchJobInfo = async (appCode) => {
   })
 }
 
-const fetchAppGroup = async (searchText) => {
+const fetchAppGroupOptions = async (searchText) => {
+  const namespaceCode = globalStore.getNamespaceCode()
   let jobGroupPage = await listAppGroup({
+    namespaceCode,
     name: searchText,
     pageNo: 1,
     pageSize: 10
@@ -326,20 +335,22 @@ const handleTerminateJob = async (record) => {
 }
 
 const initOptions = async () => {
-  queryFormState.appCode = localStorage.getItem('selectedAppCode')
+  queryFormState.appCode = globalStore.getAppCode()
   const metadatas = await listMetadata({
     metadataCodes: ['JobStatusEnum']
   })
   const options = buildMetadataOptions(metadatas)
   jobStatusOptions.value = options['JobStatusEnum']
-  fetchAppGroup(null)
+  fetchAppGroupOptions(null)
   fetchJobInfo(queryFormState.appCode)
 }
 
 onMounted(async () => {
   initOptions()
+  const namespaceCode = globalStore.getNamespaceCode()
   run({
     ...queryFormState,
+    namespaceCode,
     pageNo: current.value,
     pageSize: pageSize.value
   })
