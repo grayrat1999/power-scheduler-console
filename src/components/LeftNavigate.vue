@@ -69,7 +69,6 @@ const handleOpenChange = (openKeys) => {
 onMounted(() => {
   const storedSelectedKey = sessionStorage.getItem('selectedMenuItem')
   const storedOpenKeys = sessionStorage.getItem('openKeys')
-  console.log(storedSelectedKey)
   if (storedSelectedKey) {
     selectedKeys.value = [storedSelectedKey]
   }
