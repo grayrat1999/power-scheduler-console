@@ -18,13 +18,16 @@ export async function addWorkflow(
 }
 
 /** 删除工作流 POST /api/workflows/delete */
-export async function deleteWorkflow(body: number, options?: { [key: string]: any }) {
+export async function deleteWorkflow(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.deleteWorkflowParams,
+  options?: { [key: string]: any }
+) {
   return request<API.ResponseWrapperUnit>(`/api/workflows/delete`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
+    params: {
+      ...params
     },
-    data: body,
     ...(options || {})
   })
 }

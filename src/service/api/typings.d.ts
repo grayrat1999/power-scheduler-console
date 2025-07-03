@@ -57,6 +57,10 @@ declare namespace API {
     failedJobInstanceCount: number
   }
 
+  type deleteWorkflowParams = {
+    workflowId: number
+  }
+
   type ExecuteModeDTO = {
     code?: string
     label?: string

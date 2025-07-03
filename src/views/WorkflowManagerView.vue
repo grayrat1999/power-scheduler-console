@@ -108,8 +108,7 @@ import { reactive, ref, onMounted, h } from 'vue'
 
 import requestForPage from '@/utils/pageRequest'
 import { listAppGroup } from '@/service/api/appGroupApi'
-import { removeJobInfo } from '@/service/api/jobInfoApi'
-import { listWorkflow, switchWorkflowEnable } from '@/service/api/workflowApi'
+import { listWorkflow, switchWorkflowEnable, deleteWorkflow } from '@/service/api/workflowApi'
 
 import JobRunOnceModal from '@/components/JobRunOnceModal.vue'
 import JobInfoSaveModal from '@/components/JobInfoSaveModal.vue'
@@ -196,8 +195,8 @@ const showDeleteConfirm = (record) => {
     okText: '确定',
     cancelText: '取消',
     onOk: async () => {
-      await removeJobInfo({
-        jobId: record.id
+      await deleteWorkflow({
+        workflowId: record.id
       })
       const namespaceCode = globalStore.getNamespaceCode()
       run({
