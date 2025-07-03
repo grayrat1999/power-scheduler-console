@@ -126,18 +126,21 @@ const prettyLayout = async (graph: Graph) => {
 
 const handleSaveNode = (workflowNode: any) => {
   console.log('保存节点:', workflowNode)
+  addNode(graphHolder.value, 100, 500, workflowNode)
 }
 
-const addNode: any = (graph: Graph, x: number, y: number) => {
+const addNode: any = (graph: Graph, x: number, y: number, data: any) => {
   graph.addNode({
     shape: 'custom-vue-node',
     x: x,
     y: y,
     data: {
+      ...data,
       label: '我是文案11111',
       status: 'running',
       customValue: 123
     },
+
     ports: {
       items: [
         { group: 'top', id: 'port-top' },
@@ -252,8 +255,6 @@ onMounted(() => {
   // 添加一个自定义 Vue 节点
   addNode(graph, 100, 100)
   addNode(graph, 100, 200)
-  addNode(graph, 100, 300)
-  addNode(graph, 100, 400)
 
   // undo redo
   graph.bindKey(['meta+z', 'ctrl+z'], () => {
