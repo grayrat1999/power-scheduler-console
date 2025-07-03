@@ -1,9 +1,154 @@
 <template>
   <div>
+    <div class="form">
+      <a-form
+        ref="formRef"
+        :model="currentWorkflow"
+        :label-col="{ span: 3, offset: 0 }"
+        :wrapper-col="{ span: 19 }"
+        labelAlign="left"
+        autocomplete="off"
+      >
+        <a-form-item
+          label="工作流名称"
+          name="name"
+          :rules="[{ required: true, message: 'Please input name' }]"
+        >
+          <a-input v-model:value="currentWorkflow.name" />
+        </a-form-item>
+
+        <a-form-item
+          label="工作流描述"
+          name="description"
+          :rules="[{ required: true, message: 'Please input name' }]"
+        >
+          <a-textarea v-model:value="currentWorkflow.description" :rows="2" />
+        </a-form-item>
+
+        <a-form-item
+          label="调度方式"
+          name="scheduleType"
+          :rules="[{ required: true, message: 'Please Select scheduleType!' }]"
+        >
+          <a-select
+            v-model:value="currentWorkflow.scheduleType.code"
+            :options="scheduleTypeOptions"
+          />
+        </a-form-item>
+
+        <a-form-item
+          label="调度配置"
+          name="scheduleConfig"
+          :rules="[{ required: true, message: 'Please Input scheduleConfig!' }]"
+        >
+          <a-input v-model:value="currentWorkflow.scheduleConfig">
+            <template #addonAfter v-if="currentWorkflow.scheduleType.code === 'CRON'">
+              <a-button type="link" size="small" @click="handleParseCron">验证表达式</a-button>
+            </template>
+            <template
+              #addonAfter
+              v-else-if="['FIX_RATE', 'FIX_DELAY'].includes(currentWorkflow.scheduleType.code)"
+            >
+              <span>秒</span>
+            </template>
+          </a-input>
+        </a-form-item>
+
+        <a-form-item
+          label="实例并发数"
+          name="maxConcurrentNum"
+          v-if="currentWorkflow.scheduleType.code !== 'FIX_DELAY'"
+          :rules="[{ required: true, message: 'Please Input maxConcurrentNum!' }]"
+        >
+          <a-input-number class="w-full" v-model:value="currentWorkflow.maxConcurrentNum" min="1" />
+        </a-form-item>
+
+        <a-form-item
+          label="清理策略"
+          name="retentionPolicy"
+          :rules="[{ required: true, message: 'Please Select retentionPolicy!' }]"
+        >
+          <a-input v-model:value="currentWorkflow.retentionValue">
+            <template #addonBefore>
+              <span>最近</span>
+            </template>
+
+            <template #addonAfter>
+              <a-select
+                v-model:value="currentWorkflow.retentionPolicy.code"
+                :options="retentionPolicyOptions"
+              />
+            </template>
+          </a-input>
+        </a-form-item>
+      </a-form>
+    </div>
+
     <WorkflowEditor />
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
+import { ref, reactive, onMounted } from 'vue'
 import WorkflowEditor from '@/components/WorkflowEditor.vue'
+import { Modal, message } from 'ant-design-vue'
+import { parseCron } from '@/service/api/toolApi'
+import { listMetadata } from '@/service/api/metadataApi'
+import { buildMetadataOptions } from '@/utils/metadataUtils'
+
+const scheduleTypeOptions = ref([])
+const executeModeOptions = ref([])
+const jobTypeOptions = ref([])
+const scriptTypeOptions = ref([])
+const retentionPolicyOptions = ref([])
+const currentWorkflow = reactive({
+  scheduleType: { code: 'CRON' },
+  retentionPolicy: { code: 'RECENT_COUNT' },
+  retentionValue: 100,
+  maxConcurrentNum: 1
+})
+
+const handleParseCron = async () => {
+  const items = await parseCron({
+    cronExpression: currentWorkflow.scheduleConfig
+  })
+  Modal.confirm({
+    title: '下次执行时间',
+    content: h(
+      'ul',
+      items.map((item) => h('li', item))
+    ),
+    okText: '确定',
+    cancelButtonProps: { style: { display: 'none' } }
+  })
+}
+
+const fetchMetadatas = async () => {
+  const mates = await listMetadata({
+    metadataCodes: [
+      'JobTypeEnum',
+      'ScheduleTypeEnum',
+      'ExecuteModeEnum',
+      'ScriptTypeEnum',
+      'NotifyChannelEnum',
+      'NotifySceneEnum',
+      'RetentionPolicyEnum'
+    ]
+  })
+  const options = buildMetadataOptions(mates)
+  scheduleTypeOptions.value = options['ScheduleTypeEnum']
+  executeModeOptions.value = options['ExecuteModeEnum']
+  jobTypeOptions.value = options['JobTypeEnum']
+  scriptTypeOptions.value = options['ScriptTypeEnum']
+  retentionPolicyOptions.value = options['RetentionPolicyEnum'].map((item) => {
+    return {
+      label: item.label.replace('最近N', ''),
+      value: item.value
+    }
+  })
+}
+
+onMounted(async () => {
+  fetchMetadatas()
+})
 </script>

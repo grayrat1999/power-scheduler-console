@@ -6,6 +6,7 @@ import AppManagerView from '@/views/AppGroupManagerView.vue'
 import JobInstanceManagerView from '@/views/JobInstanceManagerView.vue'
 import NamespaceManagerView from '@/views/NamespaceManagerView.vue'
 import WorkflowManagerView from '@/views/WorkflowManagerView.vue'
+import WorkflowEditView from '@/views/WorkflowEditView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,6 +44,11 @@ const router = createRouter({
       path: '/workflowManager',
       name: '工作流管理',
       component: WorkflowManagerView
+    },
+    {
+      path: '/workflowEditor',
+      name: '工作流编辑器',
+      component: WorkflowEditView
     }
   ]
 })
