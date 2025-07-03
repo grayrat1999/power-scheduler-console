@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="tool-bar">
-      <a-button type="text" :icon="h(PlusOutlined)" />
+      <a-button type="text" :icon="h(PlusOutlined)" @click="openSaveModal" />
       <a-button type="text" :icon="h(ZoomInOutlined)" />
       <a-button type="text" :icon="h(ZoomOutOutlined)" />
     </div>
@@ -10,6 +10,8 @@
       <div id="container"></div>
       <TeleportContainer />
     </div>
+
+    <WorkflowNodeSaveModal ref="saveModelRef" />
   </div>
 </template>
 
@@ -24,6 +26,10 @@ import { History } from '@antv/x6-plugin-history'
 import { Transform } from '@antv/x6-plugin-transform'
 import { Snapline } from '@antv/x6-plugin-snapline'
 import { ZoomInOutlined, ZoomOutOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import { DagreLayout, type OutModel } from '@antv/layout'
+import WorkflowNodeSaveModal from './WorkflowNodeSaveModal.vue'
+
+const saveModelRef = ref()
 
 defineProps({
   value: {
@@ -75,8 +81,6 @@ register({
 
 // 获取 Teleport 容器组件（解决 Teleport 渲染问题）
 const TeleportContainer = getTeleport()
-
-import { DagreLayout, type OutModel } from '@antv/layout'
 
 const prettyLayout = async (graph: Graph) => {
   // 1. 获取 Graph 实例中的数据
@@ -139,6 +143,10 @@ const addNode: any = (graph: Graph, x: number, y: number) => {
       ]
     }
   })
+}
+
+const openSaveModal = () => {
+  saveModelRef.value.openModal(null)
 }
 
 // 在组件挂载后初始化画布
