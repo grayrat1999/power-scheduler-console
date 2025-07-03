@@ -114,6 +114,7 @@ import { reactive, ref, onMounted, h } from 'vue'
 import requestForPage from '@/utils/pageRequest'
 import { listAppGroup } from '@/service/api/appGroupApi'
 import { listJobInfo, removeJobInfo, switchEnable } from '@/service/api/jobInfoApi'
+import { listWorkflow } from '@/service/api/workflowApi'
 
 import JobRunOnceModal from '@/components/JobRunOnceModal.vue'
 import JobInfoSaveModal from '@/components/JobInfoSaveModal.vue'
@@ -160,7 +161,7 @@ let lastQueryParam = null
 
 const query = async (params) => {
   lastQueryParam = params
-  return listJobInfo(params)
+  return listWorkflow(params)
 }
 
 const { run, loading, current, pageSize, pagination, handleTableChange } = requestForPage(query, {

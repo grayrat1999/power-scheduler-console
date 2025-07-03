@@ -7,7 +7,7 @@
     :items="items"
     @click="handleClick"
     @openChange="handleOpenChange"
-    inlineCollapsed="true"
+    collapsed
   />
 </template>
 
