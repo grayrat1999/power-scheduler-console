@@ -14,7 +14,7 @@
 
     <a-form
       ref="formRef"
-      :model="currentWorkflow"
+      :model="currentWorkflowNode"
       :label-col="{ span: 5, offset: 0 }"
       :wrapper-col="{ span: 19 }"
       labelAlign="left"
@@ -24,14 +24,14 @@
       <template v-if="currentStep == 0">
         <a-form-item
           label="节点名称"
-          name="jobName"
-          :rules="[{ required: true, message: 'Please input jobName!' }]"
+          name="name"
+          :rules="[{ required: true, message: 'Please input name!' }]"
         >
-          <a-input v-model:value="currentWorkflow.jobName" />
+          <a-input v-model:value="currentWorkflowNode.name" />
         </a-form-item>
 
-        <a-form-item label="节点说明" name="jobDesc">
-          <a-textarea v-model:value="currentWorkflow.jobDesc" :rows="2" />
+        <a-form-item label="节点说明" name="description">
+          <a-textarea v-model:value="currentWorkflowNode.description" :rows="2" />
         </a-form-item>
 
         <a-form-item
@@ -39,42 +39,45 @@
           name="jobType"
           :rules="[{ required: true, message: 'Please select jobType!' }]"
         >
-          <a-select v-model:value="currentWorkflow.jobType.code" :options="jobTypeOptions" />
+          <a-select v-model:value="currentWorkflowNode.jobType.code" :options="jobTypeOptions" />
         </a-form-item>
 
         <a-form-item
-          v-if="currentWorkflow.jobType.code == 'JAVA'"
+          v-if="currentWorkflowNode.jobType.code == 'JAVA'"
           label="任务处理器"
           name="processor"
           :rules="[{ required: true, message: 'Please input processor!' }]"
         >
-          <a-input v-model:value="currentWorkflow.processor" />
+          <a-input v-model:value="currentWorkflowNode.processor" />
         </a-form-item>
 
         <a-form-item
-          v-if="currentWorkflow.jobType.code == 'SCRIPT'"
+          v-if="currentWorkflowNode.jobType.code == 'SCRIPT'"
           label="脚本类型"
           name="scriptType"
           :rules="[{ required: true, message: 'Please select scriptType!' }]"
         >
-          <a-select v-model:value="currentWorkflow.scriptType.code" :options="scriptTypeOptions" />
+          <a-select
+            v-model:value="currentWorkflowNode.scriptType.code"
+            :options="scriptTypeOptions"
+          />
         </a-form-item>
 
         <a-form-item
-          v-if="currentWorkflow.jobType.code == 'JAVA'"
+          v-if="currentWorkflowNode.jobType.code == 'JAVA'"
           label="任务参数"
           name="executeParams"
         >
-          <a-textarea v-model:value="currentWorkflow.executeParams" :rows="3" />
+          <a-textarea v-model:value="currentWorkflowNode.executeParams" :rows="3" />
         </a-form-item>
 
         <a-form-item
-          v-if="currentWorkflow.jobType.code == 'SCRIPT'"
+          v-if="currentWorkflowNode.jobType.code == 'SCRIPT'"
           label="脚本代码"
           name="scriptCode"
           :rules="[{ required: true, message: 'Please input scriptCode!' }]"
         >
-          <a-textarea v-model:value="currentWorkflow.scriptCode" :rows="3" />
+          <a-textarea v-model:value="currentWorkflowNode.scriptCode" :rows="3" />
         </a-form-item>
       </template>
 
@@ -85,7 +88,7 @@
           :rules="[{ required: true, message: 'Please Select executeMode!' }]"
         >
           <a-select
-            v-model:value="currentWorkflow.executeMode.code"
+            v-model:value="currentWorkflowNode.executeMode.code"
             :options="executeModeOptions"
           />
         </a-form-item>
@@ -96,7 +99,7 @@
             name="priority"
             :rules="[{ required: true, message: 'Please Input priority!' }]"
           >
-            <a-select v-model:value="currentWorkflow.priority">
+            <a-select v-model:value="currentWorkflowNode.priority">
               <a-select-option :value="1">低</a-select-option>
               <a-select-option :value="2">中</a-select-option>
               <a-select-option :value="3">高</a-select-option>
@@ -108,7 +111,11 @@
             :name="['maxAttemptCnt']"
             :rules="[{ required: true, message: 'Please Input maxAttemptCnt!' }]"
           >
-            <a-input-number class="w-full" v-model:value="currentWorkflow.maxAttemptCnt" min="0" />
+            <a-input-number
+              class="w-full"
+              v-model:value="currentWorkflowNode.maxAttemptCnt"
+              min="0"
+            />
           </a-form-item>
 
           <a-form-item
@@ -116,7 +123,11 @@
             name="attemptInterval"
             :rules="[{ required: true, message: 'Please Input attemptInterval!' }]"
           >
-            <a-input-number class="w-full" v-model:value="currentWorkflow.attemptInterval" min="0">
+            <a-input-number
+              class="w-full"
+              v-model:value="currentWorkflowNode.attemptInterval"
+              min="0"
+            >
               <template #addonAfter>
                 <span>秒</span>
               </template>
@@ -126,12 +137,12 @@
           <a-form-item
             label="子任务失败重试次数"
             :name="['taskMaxAttemptCnt']"
-            v-if="currentWorkflow.executeMode.code !== 'SINGLE'"
+            v-if="currentWorkflowNode.executeMode.code !== 'SINGLE'"
             :rules="[{ required: true, message: 'Please Input taskMaxAttemptCnt!' }]"
           >
             <a-input-number
               class="w-full"
-              v-model:value="currentWorkflow.taskMaxAttemptCnt"
+              v-model:value="currentWorkflowNode.taskMaxAttemptCnt"
               min="0"
             />
           </a-form-item>
@@ -139,12 +150,12 @@
           <a-form-item
             label="子任务失败重试间隔"
             name="taskAttemptInterval"
-            v-if="currentWorkflow.executeMode.code !== 'SINGLE'"
+            v-if="currentWorkflowNode.executeMode.code !== 'SINGLE'"
             :rules="[{ required: true, message: 'Please Input taskAttemptInterval!' }]"
           >
             <a-input-number
               class="w-full"
-              v-model:value="currentWorkflow.taskAttemptInterval"
+              v-model:value="currentWorkflowNode.taskAttemptInterval"
               min="0"
             >
               <template #addonAfter>
@@ -189,11 +200,10 @@ const steps = [
   }
 ]
 const emptyJobInfo = {
-  jobName: null,
-  jobDesc: null,
+  name: null,
+  description: null,
   processor: null,
   executeParams: null,
-  scheduleConfig: null,
   maxConcurrentNum: 1,
   priority: 2,
   maxAttemptCnt: 0,
@@ -223,12 +233,11 @@ const title = ref('')
 const saveMode = ref('')
 const formRef = ref()
 const visibility = ref(false)
-const expandAdvanceConfig = ref(false)
 const currentStep = ref(0)
-const currentWorkflow = reactive({})
+const currentWorkflowNode = reactive({})
 
 const openModal = async (workflowNodeId) => {
-  Object.assign(currentWorkflow, emptyJobInfo)
+  Object.assign(currentWorkflowNode, emptyJobInfo)
   visibility.value = true
   currentStep.value = 0
   fetchAllOptions()
@@ -236,11 +245,11 @@ const openModal = async (workflowNodeId) => {
     saveMode.value = 'edit'
     title.value = '编辑节点'
     const jobInfoDetail = await getJobInfo({ jobId: workflowNodeId })
-    Object.assign(currentWorkflow, jobInfoDetail)
+    Object.assign(currentWorkflowNode, jobInfoDetail)
   } else {
     saveMode.value = 'add'
     title.value = '新建节点'
-    Object.assign(currentWorkflow, emptyJobInfo)
+    Object.assign(currentWorkflowNode, emptyJobInfo)
   }
 }
 
@@ -251,8 +260,8 @@ const goToNextStep = () => {
 }
 
 const onSubmit = async () => {
-  if (currentWorkflow.jobType == 'SCRIPT') {
-    currentWorkflow.jobHandler = 'scriptHandler'
+  if (currentWorkflowNode.jobType == 'SCRIPT') {
+    currentWorkflowNode.jobHandler = 'scriptHandler'
   }
   if (saveMode.value == 'add') {
     const namespaceCode = globalStore.getNamespaceCode()
@@ -260,7 +269,7 @@ const onSubmit = async () => {
   }
   visibility.value = false
   message.success('保存成功')
-  emit('onSubmitSuccess')
+  emit('onSubmitSuccess', currentWorkflowNode)
 }
 
 const fetchMetadatas = async () => {

@@ -11,7 +11,7 @@
       <TeleportContainer />
     </div>
 
-    <WorkflowNodeSaveModal ref="saveModelRef" />
+    <WorkflowNodeSaveModal ref="saveModelRef" @onSubmitSuccess="handleSaveNode" />
   </div>
 </template>
 
@@ -122,6 +122,10 @@ const prettyLayout = async (graph: Graph) => {
   console.log(graph.toJSON())
   // 5. 居中画布
   graph.centerContent()
+}
+
+const handleSaveNode = (workflowNode: any) => {
+  console.log('保存节点:', workflowNode)
 }
 
 const addNode: any = (graph: Graph, x: number, y: number) => {
