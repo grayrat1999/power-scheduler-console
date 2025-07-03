@@ -45,11 +45,11 @@ const items = reactive([
   getItem('首页', 'index', () => h(DashboardOutlined)),
   getItem('任务管理', '', () => h(ScheduleOutlined), [
     getItem('任务配置', 'jobManager'),
-    getItem('执行记录', 'jobInstanceManager')
+    getItem('任务执行记录', 'jobInstanceManager')
   ]),
   getItem('工作流管理', '', () => h(BranchesOutlined), [
     getItem('工作流配置', 'workflowManager'),
-    getItem('执行记录', 'jobInstanceManager')
+    getItem('工作流执行记录', 'jobInstanceManager')
   ]),
   getItem('系统管理', '', () => h(SettingOutlined), [
     getItem('命名空间', 'namespaceManager', () => h(ClusterOutlined)),
