@@ -16,13 +16,8 @@
           </a-form-item>
         </a-col>
         <a-col :span="8">
-          <a-form-item name="jobName" label="任务名称">
-            <a-input v-model:value="queryFormState.jobName" />
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item name="processor" label="任务处理器">
-            <a-input v-model:value="queryFormState.processor" />
+          <a-form-item name="name" label="工作流名称">
+            <a-input v-model:value="queryFormState.name" />
           </a-form-item>
         </a-col>
       </a-row>
@@ -48,10 +43,10 @@
             <div>{{ record.scheduleConfig }}</div>
           </template>
 
-          <template v-if="column.dataIndex === 'jobName'">
+          <template v-if="column.dataIndex === 'name'">
             <span v-if="record.enabled"><a-tag color="green">启用</a-tag></span>
             <span v-else><a-tag color="red">禁用</a-tag></span>
-            <span>{{ record.jobName }}</span>
+            <span>{{ record.name }}</span>
           </template>
 
           <template v-if="column.dataIndex === 'jobType&processor'">
@@ -126,22 +121,14 @@ const columns = [
     dataIndex: 'id'
   },
   {
-    title: '任务名称',
-    dataIndex: 'jobName',
+    title: '工作流名称',
+    dataIndex: 'name',
     ellipsis: true
   },
   {
     title: '应用名称',
     dataIndex: 'appName',
     ellipsis: true
-  },
-  {
-    title: '任务类型/处理器',
-    dataIndex: 'jobType&processor'
-  },
-  {
-    title: '执行方式',
-    dataIndex: ['executeMode', 'label']
   },
   {
     title: '调度类型/调度配置',
@@ -203,7 +190,7 @@ const showDeleteConfirm = (record) => {
     title: '删除确认',
     content: h('div', [
       h('span', '确定要删除 '),
-      h('span', { class: 'font-semibold text-blue-500' }, record.jobName),
+      h('span', { class: 'font-semibold text-blue-500' }, record.name),
       h('span', ' ?')
     ]),
     okText: '确定',
@@ -228,7 +215,7 @@ const handleSwitchEnable = async (record) => {
     title: `确认${!record.enabled ? '启用' : '禁用'}任务`,
     content: h('div', [
       h('span', `确定要${!record.enabled ? '启用' : '禁用'} `),
-      h('span', { class: 'font-semibold text-blue-500' }, record.jobName),
+      h('span', { class: 'font-semibold text-blue-500' }, record.name),
       h('span', ' ?')
     ]),
     okText: '确定',
