@@ -60,3 +60,18 @@ export async function listWorkflow(
     ...(options || {})
   })
 }
+
+/** 修改工作流启用状态 POST /api/workflows/switch */
+export async function switchWorkflowEnable(
+  body: API.WorkflowSwitchRequestDTO,
+  options?: { [key: string]: any }
+) {
+  return request<API.ResponseWrapperUnit>(`/api/workflows/switch`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data: body,
+    ...(options || {})
+  })
+}

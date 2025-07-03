@@ -108,8 +108,8 @@ import { reactive, ref, onMounted, h } from 'vue'
 
 import requestForPage from '@/utils/pageRequest'
 import { listAppGroup } from '@/service/api/appGroupApi'
-import { listJobInfo, removeJobInfo, switchEnable } from '@/service/api/jobInfoApi'
-import { listWorkflow } from '@/service/api/workflowApi'
+import { removeJobInfo } from '@/service/api/jobInfoApi'
+import { listWorkflow, switchWorkflowEnable } from '@/service/api/workflowApi'
 
 import JobRunOnceModal from '@/components/JobRunOnceModal.vue'
 import JobInfoSaveModal from '@/components/JobInfoSaveModal.vue'
@@ -221,8 +221,8 @@ const handleSwitchEnable = async (record) => {
     okText: '确定',
     cancelText: '取消',
     onOk: async () => {
-      await switchEnable({
-        jobId: record.id,
+      await switchWorkflowEnable({
+        workflowId: record.id,
         enabled: !record.enabled
       })
       const namespaceCode = globalStore.getNamespaceCode()

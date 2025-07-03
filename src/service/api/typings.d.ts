@@ -828,5 +828,18 @@ declare namespace API {
     name?: string
   }
 
-  type WorkflowQueryResponseDTO = true
+  type WorkflowQueryResponseDTO = {
+    appName?: string
+    id?: number
+    name?: string
+    enabled?: boolean
+    scheduleType?: ScheduleTypeDTO
+    scheduleConfig?: string
+    scheduleConfigDesc?: string
+  }
+
+  type WorkflowSwitchRequestDTO = {
+    workflowId: number
+    enabled: boolean
+  }
 }
