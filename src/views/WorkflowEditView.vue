@@ -90,11 +90,16 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import WorkflowEditor from '@/components/WorkflowEditor.vue'
+import { useRoute } from 'vue-router'
 import { Modal, message } from 'ant-design-vue'
 import { parseCron } from '@/service/api/toolApi'
 import { listMetadata } from '@/service/api/metadataApi'
 import { buildMetadataOptions } from '@/utils/metadataUtils'
+import WorkflowEditor from '@/components/WorkflowEditor.vue'
+
+const { query } = useRoute()
+const appCode = query.appCode || ''
+const workflowId = query.workflowId || null
 
 const scheduleTypeOptions = ref([])
 const executeModeOptions = ref([])

@@ -25,6 +25,13 @@ import { Transform } from '@antv/x6-plugin-transform'
 import { Snapline } from '@antv/x6-plugin-snapline'
 import { ZoomInOutlined, ZoomOutOutlined, PlusOutlined } from '@ant-design/icons-vue'
 
+defineProps({
+  value: {
+    type: String,
+    required: false
+  }
+})
+
 const graphHolder = ref<Graph>()
 
 const portAttr = {
@@ -296,6 +303,6 @@ onMounted(() => {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 16px; /* 根据需要设置 */
+  font-size: 16px;
 }
 </style>
