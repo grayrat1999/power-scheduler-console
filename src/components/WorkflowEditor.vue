@@ -1,17 +1,21 @@
 <template>
   <div>
     <div class="tool-bar">
-      <a-button type="text" :icon="h(PlusOutlined)" @click="openSaveModal" />
+      <a-button type="text" :icon="h(PlusOutlined)" @click="openEditPane(null)" />
       <a-button type="text" :icon="h(ZoomInOutlined)" />
       <a-button type="text" :icon="h(ZoomOutOutlined)" />
     </div>
 
-    <div class="app-content">
+    <div class="app-content relative">
       <div id="container"></div>
       <TeleportContainer />
+      <div
+        class="absolute top-1 right-1 h-[98%] w-[500px] bg-white shadow-lg border-l z-50 p-4 overflow-y-auto"
+        v-show="showEditPane"
+      >
+        <WorkflowNodeSaveModal ref="showEditPaneRef" @onSubmitSuccess="handleSaveNode" />
+      </div>
     </div>
-
-    <WorkflowNodeSaveModal ref="saveModelRef" @onSubmitSuccess="handleSaveNode" />
   </div>
 </template>
 
@@ -29,7 +33,8 @@ import { ZoomInOutlined, ZoomOutOutlined, PlusOutlined } from '@ant-design/icons
 import { DagreLayout, type OutModel } from '@antv/layout'
 import WorkflowNodeSaveModal from './WorkflowNodeSaveModal.vue'
 
-const saveModelRef = ref()
+const showEditPaneRef = ref()
+const showEditPane = ref(false)
 
 defineProps({
   value: {
@@ -126,7 +131,13 @@ const prettyLayout = async (graph: Graph) => {
 
 const handleSaveNode = (workflowNode: any) => {
   console.log('保存节点:', workflowNode)
-  addNode(graphHolder.value, 100, 100, workflowNode)
+  if (workflowNode.uuid) {
+    const node = graphHolder.value!!.getCellById(workflowNode.uuid)
+    node.setData(workflowNode)
+  } else {
+    addNode(graphHolder.value, 100, 100, workflowNode)
+  }
+  closeEditPane()
 }
 
 const addNode: any = (graph: Graph, x: number, y: number, data: any) => {
@@ -135,10 +146,7 @@ const addNode: any = (graph: Graph, x: number, y: number, data: any) => {
     x: x,
     y: y,
     data: {
-      ...data,
-      jobType: data.jobType?.code,
-      executeMode: data.executeMode?.code,
-      scriptType: data.scriptType?.code
+      ...data
     },
 
     ports: {
@@ -152,8 +160,13 @@ const addNode: any = (graph: Graph, x: number, y: number, data: any) => {
   })
 }
 
-const openSaveModal = () => {
-  saveModelRef.value.openModal(null)
+const openEditPane = (node: any) => {
+  showEditPane.value = true
+  showEditPaneRef.value.open(node)
+}
+
+const closeEditPane = () => {
+  showEditPane.value = false
 }
 
 // 在组件挂载后初始化画布
@@ -252,9 +265,6 @@ onMounted(() => {
 
   graphHolder.value = graph
 
-  // 添加一个自定义 Vue 节点
-  addNode(graph, 400, 100, { name: '节点1' })
-
   // undo redo
   graph.bindKey(['meta+z', 'ctrl+z'], () => {
     if (graph.canUndo()) {
@@ -283,6 +293,7 @@ onMounted(() => {
     const cells = graph.getSelectedCells()
     if (cells.length) {
       graph.removeCells(cells)
+      closeEditPane()
     }
   })
 
@@ -301,6 +312,14 @@ onMounted(() => {
     const container = document.getElementById('container')!
     const ports = container.querySelectorAll('.x6-port-body') as NodeListOf<SVGElement>
     showPorts(ports, false)
+  })
+
+  graph.on('node:click', ({ node }) => {
+    console.log('点击节点:', node.data)
+    openEditPane(node.data)
+  })
+  graph.on('blank:click', () => {
+    closeEditPane()
   })
 })
 
