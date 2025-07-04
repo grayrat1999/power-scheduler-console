@@ -307,6 +307,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.app-content {
+  width: 95%;
+}
 #container {
   width: 100%;
   height: 700px;

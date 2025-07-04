@@ -29,7 +29,7 @@
     </a-form>
 
     <div class="search-result-list">
-      <a-button type="primary" class="mb-2" @click="showSaveModel(null)">新建</a-button>
+      <a-button type="primary" class="mb-2" @click="goToEditor(null)">新建</a-button>
       <a-table
         :columns="columns"
         :data-source="dataSource"
@@ -62,7 +62,7 @@
           </template>
 
           <template v-if="column.dataIndex === 'operation'">
-            <span class="mr-1 text-blue-500 cursor-pointer" @click="showSaveModel(record)">
+            <span class="mr-1 text-blue-500 cursor-pointer" @click="goToEditor(record)">
               编辑
             </span>
 
@@ -105,6 +105,7 @@
 <script setup>
 import { Modal, message } from 'ant-design-vue'
 import { reactive, ref, onMounted, h } from 'vue'
+import { useRouter } from 'vue-router'
 
 import requestForPage from '@/utils/pageRequest'
 import { listAppGroup } from '@/service/api/appGroupApi'
@@ -113,6 +114,8 @@ import { listWorkflow, switchWorkflowEnable, deleteWorkflow } from '@/service/ap
 import JobRunOnceModal from '@/components/JobRunOnceModal.vue'
 import JobInfoSaveModal from '@/components/JobInfoSaveModal.vue'
 import { globalStore } from '@/stores/global'
+
+const router = useRouter()
 
 const columns = [
   {
@@ -164,13 +167,20 @@ const fetchJobInfo = () => {
   })
 }
 
-const showSaveModel = (record) => {
+const goToEditor = (record) => {
   const cachedAppCode = globalStore.getAppCode()
   if (!record && !cachedAppCode) {
     message.error('请先选择应用')
     return
   }
   const appCode = record ? record.appCode : cachedAppCode
+  router.push({
+    name: '工作流编辑器',
+    query: {
+      appCode,
+      workflowId: record ? record.id : null
+    }
+  })
   saveModelRef.value.openModal(appCode, record?.id)
 }
 
