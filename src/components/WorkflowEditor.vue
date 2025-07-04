@@ -141,7 +141,7 @@ const handleSaveNode = (workflowNode: any) => {
 }
 
 const addNode: any = (graph: Graph, x: number, y: number, data: any) => {
-  graph.addNode({
+  const node = graph.addNode({
     shape: 'workflow-node',
     x: x,
     y: y,
@@ -158,6 +158,7 @@ const addNode: any = (graph: Graph, x: number, y: number, data: any) => {
       ]
     }
   })
+  node.setData({ ...node.data, uuid: node.id })
 }
 
 const openEditPane = (node: any) => {
