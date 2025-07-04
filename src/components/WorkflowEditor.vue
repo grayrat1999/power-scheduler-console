@@ -53,7 +53,7 @@ const portAttr = {
 
 // 注册自定义 Vue 节点
 register({
-  shape: 'custom-vue-node',
+  shape: 'workflow-node',
   width: 180,
   height: 42,
   component: WorkflowNode,
@@ -126,19 +126,19 @@ const prettyLayout = async (graph: Graph) => {
 
 const handleSaveNode = (workflowNode: any) => {
   console.log('保存节点:', workflowNode)
-  addNode(graphHolder.value, 100, 500, workflowNode)
+  addNode(graphHolder.value, 100, 100, workflowNode)
 }
 
 const addNode: any = (graph: Graph, x: number, y: number, data: any) => {
   graph.addNode({
-    shape: 'custom-vue-node',
+    shape: 'workflow-node',
     x: x,
     y: y,
     data: {
       ...data,
-      label: '我是文案11111',
-      status: 'running',
-      customValue: 123
+      jobType: data.jobType?.code,
+      executeMode: data.executeMode?.code,
+      scriptType: data.scriptType?.code
     },
 
     ports: {
@@ -253,8 +253,7 @@ onMounted(() => {
   graphHolder.value = graph
 
   // 添加一个自定义 Vue 节点
-  addNode(graph, 100, 100)
-  addNode(graph, 100, 200)
+  addNode(graph, 400, 100, { name: '节点1' })
 
   // undo redo
   graph.bindKey(['meta+z', 'ctrl+z'], () => {
@@ -304,6 +303,38 @@ onMounted(() => {
     showPorts(ports, false)
   })
 })
+
+const exportGraph = () => {
+  const graphData = graphHolder.value!!.toJSON().cells
+  const nodeId2ParentIds = getNodeParentsMap()
+  graphData
+    .filter((it) => it.shape === 'workflow-node')
+    .forEach((it) => {
+      it.data!!.uuid = it.id
+      it.data!!.parentUuids = nodeId2ParentIds.get(it.id!!) || []
+    })
+  return graphData
+}
+
+const getNodeParentsMap = () => {
+  const edges = graphHolder.value!!.getEdges()
+  const map = new Map<string, string[]>()
+
+  edges.forEach((edge) => {
+    const sourceId = edge.getSourceCellId()
+    const targetId = edge.getTargetCellId()
+
+    if (map.has(targetId)) {
+      map.get(targetId)!.push(sourceId)
+    } else {
+      map.set(targetId, [sourceId])
+    }
+  })
+
+  return map
+}
+
+defineExpose({ exportGraph })
 </script>
 
 <style scoped>

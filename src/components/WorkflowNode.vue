@@ -1,6 +1,6 @@
 <template>
   <div class="border border-gray-300 bg-white rounded-md shadow-sm p-3 text-xs w-[180px]">
-    <div class="label h-[16px] leading-[16px]">{{ data.label }}</div>
+    <div class="label h-[16px] leading-[16px]">{{ data.name }}</div>
   </div>
 </template>
 
@@ -10,7 +10,7 @@ import { inject, ref, onMounted } from 'vue'
 // 注入 X6 提供的 getNode 方法（X6 会自动注入）
 const getNode = inject<() => any>('getNode')
 const data = ref({
-  label: '默认文案',
+  name: '默认文案',
   status: 'running'
 })
 

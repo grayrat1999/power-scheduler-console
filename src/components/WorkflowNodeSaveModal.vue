@@ -218,9 +218,6 @@ const emptyJobInfo = {
   },
   executeMode: {
     code: 'SINGLE'
-  },
-  scheduleType: {
-    code: 'CRON'
   }
 }
 

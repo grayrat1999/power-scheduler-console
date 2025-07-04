@@ -3,7 +3,7 @@
     <div class="form">
       <div class="flex justify-between items-center py-4">
         <a-button type="primary" @click="goBack">返回</a-button>
-        <a-button type="primary" @click="handleParseCron">保存</a-button>
+        <a-button type="primary" @click="handleSave">保存</a-button>
       </div>
 
       <a-form
@@ -22,11 +22,7 @@
           <a-input v-model:value="currentWorkflow.name" />
         </a-form-item>
 
-        <a-form-item
-          label="工作流描述"
-          name="description"
-          :rules="[{ required: true, message: 'Please input name' }]"
-        >
+        <a-form-item label="工作流描述" name="description">
           <a-textarea v-model:value="currentWorkflow.description" :rows="2" />
         </a-form-item>
 
@@ -89,7 +85,7 @@
       </a-form>
     </div>
 
-    <WorkflowEditor />
+    <WorkflowEditor ref="workflowEditorRef" />
   </div>
 </template>
 
@@ -100,13 +96,16 @@ import { Modal, message } from 'ant-design-vue'
 import { parseCron } from '@/service/api/toolApi'
 import { listMetadata } from '@/service/api/metadataApi'
 import { buildMetadataOptions } from '@/utils/metadataUtils'
+import { addWorkflow } from '@/service/api/workflowApi'
 import WorkflowEditor from '@/components/WorkflowEditor.vue'
+import { globalStore } from '@/stores/global'
 
 const route = useRoute()
 const router = useRouter()
 const appCode = route.query.appCode || ''
 const workflowId = route.query.workflowId || null
 
+const workflowEditorRef = ref()
 const scheduleTypeOptions = ref([])
 const executeModeOptions = ref([])
 const jobTypeOptions = ref([])
@@ -135,6 +134,21 @@ const handleParseCron = async () => {
     ),
     okText: '确定',
     cancelButtonProps: { style: { display: 'none' } }
+  })
+}
+
+const handleSave = async () => {
+  const graphData = workflowEditorRef.value.exportGraph()
+  const namespaceCode = globalStore.getNamespaceCode()
+  console.log('导出图形数据:', graphData)
+  await addWorkflow({
+    namespaceCode,
+    appCode,
+    ...currentWorkflow,
+    retentionPolicy: currentWorkflow.retentionPolicy.code,
+    scheduleType: currentWorkflow.scheduleType.code,
+    nodes: graphData.filter((it) => it.shape === 'workflow-node').map((it) => it.data),
+    graphData: JSON.stringify(graphData)
   })
 }
 
