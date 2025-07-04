@@ -1,11 +1,16 @@
 <template>
   <div>
     <div class="form">
+      <div class="flex justify-between items-center py-4">
+        <a-button type="primary" @click="goBack">返回</a-button>
+        <a-button type="primary" @click="handleParseCron">保存</a-button>
+      </div>
+
       <a-form
         ref="formRef"
         :model="currentWorkflow"
         :label-col="{ span: 3, offset: 0 }"
-        :wrapper-col="{ span: 19 }"
+        :wrapper-col="{ span: 24 }"
         labelAlign="left"
         autocomplete="off"
       >
@@ -90,16 +95,17 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Modal, message } from 'ant-design-vue'
 import { parseCron } from '@/service/api/toolApi'
 import { listMetadata } from '@/service/api/metadataApi'
 import { buildMetadataOptions } from '@/utils/metadataUtils'
 import WorkflowEditor from '@/components/WorkflowEditor.vue'
 
-const { query } = useRoute()
-const appCode = query.appCode || ''
-const workflowId = query.workflowId || null
+const route = useRoute()
+const router = useRouter()
+const appCode = route.query.appCode || ''
+const workflowId = route.query.workflowId || null
 
 const scheduleTypeOptions = ref([])
 const executeModeOptions = ref([])
@@ -112,6 +118,10 @@ const currentWorkflow = reactive({
   retentionValue: 100,
   maxConcurrentNum: 1
 })
+
+const goBack = () => {
+  router.back()
+}
 
 const handleParseCron = async () => {
   const items = await parseCron({
