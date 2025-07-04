@@ -326,31 +326,28 @@ onMounted(() => {
 
 const exportGraph = () => {
   const graphData = graphHolder.value!!.toJSON().cells
-  const nodeId2ParentIds = getNodeParentsMap()
+  const nodeId2ChildrenIds = getNodeChildrenMap()
   graphData
     .filter((it) => it.shape === 'workflow-node')
     .forEach((it) => {
       it.data!!.uuid = it.id
-      it.data!!.parentUuids = nodeId2ParentIds.get(it.id!!) || []
+      it.data!!.childrenUuids = nodeId2ChildrenIds.get(it.id!!) || []
     })
   return graphData
 }
 
-const getNodeParentsMap = () => {
+const getNodeChildrenMap = () => {
   const edges = graphHolder.value!!.getEdges()
   const map = new Map<string, string[]>()
-
   edges.forEach((edge) => {
     const sourceId = edge.getSourceCellId()
     const targetId = edge.getTargetCellId()
-
-    if (map.has(targetId)) {
-      map.get(targetId)!.push(sourceId)
+    if (map.has(sourceId)) {
+      map.get(sourceId)!.push(targetId)
     } else {
-      map.set(targetId, [sourceId])
+      map.set(sourceId, [targetId])
     }
   })
-
   return map
 }
 

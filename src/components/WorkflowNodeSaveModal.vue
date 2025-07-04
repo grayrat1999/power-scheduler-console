@@ -158,17 +158,14 @@
 
 <script setup>
 import { reactive, ref, h, onMounted } from 'vue'
-import { message, Modal } from 'ant-design-vue'
 import { buildMetadataOptions } from '@/utils/metadataUtils'
 import { listMetadata } from '@/service/api/metadataApi'
-import { globalStore } from '@/stores/global'
 
 const emptyJobInfo = {
   name: null,
   description: null,
   processor: null,
   executeParams: null,
-  maxConcurrentNum: 1,
   priority: 2,
   maxAttemptCnt: 0,
   attemptInterval: 15,
