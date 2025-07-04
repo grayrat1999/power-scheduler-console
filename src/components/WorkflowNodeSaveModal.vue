@@ -176,7 +176,8 @@ const emptyJobInfo = {
   taskAttemptInterval: 15,
   jobType: 'JAVA',
   scriptType: 'BASH',
-  executeMode: 'SINGLE'
+  executeMode: 'SINGLE',
+  uuid: null
 }
 
 const emit = defineEmits(['onSubmitSuccess'])
