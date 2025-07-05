@@ -40,12 +40,12 @@
           :rules="[{ required: true, message: 'Please Input scheduleConfig!' }]"
         >
           <a-input v-model:value="currentWorkflow.scheduleConfig">
-            <template #addonAfter v-if="currentWorkflow.scheduleType.code === 'CRON'">
+            <template #addonAfter v-if="currentWorkflow.scheduleType === 'CRON'">
               <a-button type="link" size="small" @click="handleParseCron">验证表达式</a-button>
             </template>
             <template
               #addonAfter
-              v-else-if="['FIX_RATE', 'FIX_DELAY'].includes(currentWorkflow.scheduleType.code)"
+              v-else-if="['FIX_RATE', 'FIX_DELAY'].includes(currentWorkflow.scheduleType)"
             >
               <span>秒</span>
             </template>
@@ -55,7 +55,7 @@
         <a-form-item
           label="实例并发数"
           name="maxConcurrentNum"
-          v-if="currentWorkflow.scheduleType.code !== 'FIX_DELAY'"
+          v-if="currentWorkflow.scheduleType !== 'FIX_DELAY'"
           :rules="[{ required: true, message: 'Please Input maxConcurrentNum!' }]"
         >
           <a-input-number class="w-full" v-model:value="currentWorkflow.maxConcurrentNum" min="1" />
@@ -73,7 +73,7 @@
 
             <template #addonAfter>
               <a-select
-                v-model:value="currentWorkflow.retentionPolicy.code"
+                v-model:value="currentWorkflow.retentionPolicy"
                 :options="retentionPolicyOptions"
               />
             </template>
@@ -110,14 +110,16 @@ const jobTypeOptions = ref([])
 const scriptTypeOptions = ref([])
 const retentionPolicyOptions = ref([])
 const currentWorkflow = reactive({
-  scheduleType: { code: 'CRON' },
-  retentionPolicy: { code: 'RECENT_COUNT' },
+  scheduleType: 'CRON',
+  retentionPolicy: 'RECENT_COUNT',
   retentionValue: 100,
   maxConcurrentNum: 1
 })
 
 const goBack = () => {
-  router.back()
+  router.push({
+    name: '工作流管理'
+  })
 }
 
 const handleParseCron = async () => {
@@ -139,15 +141,21 @@ const handleSave = async () => {
   const graphData = workflowEditorRef.value.exportGraph()
   const namespaceCode = globalStore.getNamespaceCode()
   console.log('导出图形数据:', graphData)
-  await addWorkflow({
+  const returnWorkflowId = await addWorkflow({
     namespaceCode,
     appCode,
     ...currentWorkflow,
-    retentionPolicy: currentWorkflow.retentionPolicy.code,
-    scheduleType: currentWorkflow.scheduleType.code,
+    retentionPolicy: currentWorkflow.retentionPolicy,
+    scheduleType: currentWorkflow.scheduleType,
     nodes: graphData.filter((it) => it.shape === 'workflow-node').map((it) => it.data),
     graphData: JSON.stringify(graphData)
   })
+  if (!workflowId) {
+    router.push({
+      name: '工作流编辑器',
+      query: { workflowId: returnWorkflowId }
+    })
+  }
 }
 
 const fetchMetadatas = async () => {
