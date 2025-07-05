@@ -149,7 +149,7 @@ const handleSave = async () => {
       nodes: graphData.filter((it) => it.shape === 'workflow-node').map((it) => it.data),
       graphData: JSON.stringify(graphData)
     })
-    message.success('保存成功')
+    message.success('操作成功')
   } else {
     const returnWorkflowId = await addWorkflow({
       namespaceCode,
@@ -158,7 +158,7 @@ const handleSave = async () => {
       nodes: graphData.filter((it) => it.shape === 'workflow-node').map((it) => it.data),
       graphData: JSON.stringify(graphData)
     })
-    message.success('保存成功')
+    message.success('操作成功')
     router.push({
       name: '工作流编辑器',
       query: { workflowId: returnWorkflowId }

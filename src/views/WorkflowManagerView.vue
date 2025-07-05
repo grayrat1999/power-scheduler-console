@@ -208,6 +208,7 @@ const showDeleteConfirm = (record) => {
       await deleteWorkflow({
         workflowId: record.id
       })
+      message.success('操作成功')
       const namespaceCode = globalStore.getNamespaceCode()
       run({
         ...lastQueryParam,
@@ -234,6 +235,7 @@ const handleSwitchEnable = async (record) => {
         workflowId: record.id,
         enabled: !record.enabled
       })
+      message.success('操作成功')
       const namespaceCode = globalStore.getNamespaceCode()
       run({
         ...lastQueryParam,
