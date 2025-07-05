@@ -79,6 +79,21 @@ export async function listWorkflow(
   })
 }
 
+/** 运行工作流 POST /api/workflows/run */
+export async function runWorkflow(
+  body: API.WorkflowRunRequestDTO,
+  options?: { [key: string]: any }
+) {
+  return request<API.ResponseWrapperLong>(`/api/workflows/run`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data: body,
+    ...(options || {})
+  })
+}
+
 /** 修改工作流启用状态 POST /api/workflows/switch */
 export async function switchWorkflowEnable(
   body: API.WorkflowSwitchRequestDTO,

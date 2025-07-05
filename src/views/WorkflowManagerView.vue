@@ -79,7 +79,7 @@
                   <a-menu-item>
                     <div
                       class="text-blue-500 cursor-pointer"
-                      @click="jobRunOnceModalRef.openModal(record)"
+                      @click="workerflowRunOnceModalRef.openModal(record)"
                     >
                       执行一次
                     </div>
@@ -97,8 +97,7 @@
       </a-table>
     </div>
 
-    <JobRunOnceModal ref="jobRunOnceModalRef" title="执行一次" />
-    <JobInfoSaveModal ref="saveModelRef" @onSubmitSuccess="onSubmitSuccess" />
+    <WorkflowRunOnceModal ref="workerflowRunOnceModalRef" title="执行一次" />
   </div>
 </template>
 
@@ -110,9 +109,7 @@ import { useRouter } from 'vue-router'
 import requestForPage from '@/utils/pageRequest'
 import { listAppGroup } from '@/service/api/appGroupApi'
 import { listWorkflow, switchWorkflowEnable, deleteWorkflow } from '@/service/api/workflowApi'
-
-import JobRunOnceModal from '@/components/JobRunOnceModal.vue'
-import JobInfoSaveModal from '@/components/JobInfoSaveModal.vue'
+import WorkflowRunOnceModal from '@/components/WorkflowRunOnceModal.vue'
 import { globalStore } from '@/stores/global'
 
 const router = useRouter()
@@ -142,7 +139,7 @@ const columns = [
   }
 ]
 
-const [saveModelRef, jobRunOnceModalRef] = [ref(), ref()]
+const [workerflowRunOnceModalRef] = [ref()]
 const appGroupOptions = ref([])
 const queryFormState = reactive({})
 const dataSource = ref([])
@@ -181,7 +178,6 @@ const goToEditor = (record) => {
       workflowId: record ? record.id : null
     }
   })
-  saveModelRef.value.openModal(appCode, record?.id)
 }
 
 const onSubmitSuccess = async () => {

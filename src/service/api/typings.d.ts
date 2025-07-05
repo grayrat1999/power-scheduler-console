@@ -348,25 +348,6 @@ declare namespace API {
     createdAt?: string
   }
 
-  type Node = {
-    uuid?: string
-    childrenUuids: string[]
-    workflowNodeId: number
-    jobName?: string
-    jobDesc?: string
-    jobType: 'JAVA' | 'SCRIPT'
-    processor?: string
-    executeMode: 'SINGLE' | 'BROADCAST' | 'MAP' | 'MAP_REDUCE'
-    executeParams?: string
-    scriptType?: 'BASH' | 'CMD' | 'PYTHON' | 'POWER_SHELL'
-    scriptCode?: string
-    maxAttemptCnt: number
-    attemptInterval: number
-    taskMaxAttemptCnt: number
-    taskAttemptInterval: number
-    priority: number
-  }
-
   type PageDTOAppGroupQueryResponseDTO = {
     number: number
     size: number
@@ -821,7 +802,7 @@ declare namespace API {
   }
 
   type WorkflowAddRequestDTO = {
-    nodes: Node[]
+    nodes: WorkflowNodeDTO[]
     namespaceCode?: string
     appCode?: string
     name?: string
@@ -849,10 +830,8 @@ declare namespace API {
   }
 
   type WorkflowEditRequestDTO = {
-    nodes: Node[]
+    nodes: WorkflowNodeDTO[]
     workflowId: number
-    namespaceCode?: string
-    appCode?: string
     name?: string
     description?: string
     scheduleType: 'CRON' | 'FIX_RATE' | 'FIX_DELAY' | 'ONE_TIME'
@@ -861,6 +840,24 @@ declare namespace API {
     retentionPolicy: 'RECENT_DAYS' | 'RECENT_COUNT'
     retentionValue: number
     graphData?: string
+  }
+
+  type WorkflowNodeDTO = {
+    uuid?: string
+    childrenUuids: string[]
+    name?: string
+    description?: string
+    jobType: 'JAVA' | 'SCRIPT'
+    processor?: string
+    executeMode: 'SINGLE' | 'BROADCAST' | 'MAP' | 'MAP_REDUCE'
+    executeParams?: string
+    scriptType?: 'BASH' | 'CMD' | 'PYTHON' | 'POWER_SHELL'
+    scriptCode?: string
+    maxAttemptCnt: number
+    attemptInterval: number
+    taskMaxAttemptCnt: number
+    taskAttemptInterval: number
+    priority: number
   }
 
   type WorkflowQueryRequestDTO = {
@@ -872,6 +869,8 @@ declare namespace API {
   }
 
   type WorkflowQueryResponseDTO = {
+    namespaceCode?: string
+    appCode?: string
     appName?: string
     id?: number
     name?: string
@@ -879,6 +878,12 @@ declare namespace API {
     scheduleType?: ScheduleTypeDTO
     scheduleConfig?: string
     scheduleConfigDesc?: string
+  }
+
+  type WorkflowRunRequestDTO = {
+    workflowId: number
+    workerAddress?: string
+    dataTime?: string
   }
 
   type WorkflowSwitchRequestDTO = {
