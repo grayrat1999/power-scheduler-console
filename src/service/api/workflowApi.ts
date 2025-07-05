@@ -32,6 +32,21 @@ export async function deleteWorkflow(
   })
 }
 
+/** 查询工作流详情 GET /api/workflows/detail */
+export async function getWorkflow(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getWorkflowParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.ResponseWrapperWorkflowDetailResponseDTO>(`/api/workflows/detail`, {
+    method: 'GET',
+    params: {
+      ...params
+    },
+    ...(options || {})
+  })
+}
+
 /** 编辑工作流 POST /api/workflows/edit */
 export async function editWorkflow(
   body: API.WorkflowEditRequestDTO,

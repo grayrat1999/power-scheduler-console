@@ -78,6 +78,10 @@ declare namespace API {
     jobInstanceId: number
   }
 
+  type getWorkflowParams = {
+    workflowId: number
+  }
+
   type JobInfoAddRequestDTO = {
     namespaceCode?: string
     appCode?: string
@@ -345,9 +349,9 @@ declare namespace API {
   }
 
   type Node = {
-    workflowNodeId: number
     uuid?: string
-    parentUuid?: string
+    childrenUuids: string[]
+    workflowNodeId: number
     jobName?: string
     jobDesc?: string
     jobType: 'JAVA' | 'SCRIPT'
@@ -762,6 +766,27 @@ declare namespace API {
     }
   }
 
+  type ResponseWrapperWorkflowDetailResponseDTO = {
+    data?: WorkflowDetailResponseDTO
+    success: boolean
+    code: string
+    message: string
+    cause?: {
+      stackTrace?: {
+        classLoaderName?: string
+        moduleName?: string
+        moduleVersion?: string
+        methodName?: string
+        fileName?: string
+        lineNumber?: number
+        className?: string
+        nativeMethod?: boolean
+      }[]
+      message?: string
+      localizedMessage?: string
+    }
+  }
+
   type RetentionPolicyDTO = {
     code?: string
     label?: string
@@ -807,6 +832,20 @@ declare namespace API {
     retentionPolicy: 'RECENT_DAYS' | 'RECENT_COUNT'
     retentionValue: number
     graphData?: string
+  }
+
+  type WorkflowDetailResponseDTO = {
+    appCode?: string
+    id?: number
+    name?: string
+    description?: string
+    enabled?: boolean
+    maxConcurrentNum?: number
+    retentionPolicy?: 'RECENT_DAYS' | 'RECENT_COUNT'
+    retentionValue?: number
+    graphData?: string
+    scheduleType?: 'CRON' | 'FIX_RATE' | 'FIX_DELAY' | 'ONE_TIME'
+    scheduleConfig?: string
   }
 
   type WorkflowEditRequestDTO = {

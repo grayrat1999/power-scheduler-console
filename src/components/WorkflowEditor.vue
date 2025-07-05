@@ -21,8 +21,8 @@
 
 <script lang="ts" setup>
 import WorkflowNode from '@/components/WorkflowNode.vue'
-import { onMounted, h, ref } from 'vue'
-import { Graph, Shape } from '@antv/x6'
+import { onMounted, h, ref, watch } from 'vue'
+import { Graph, Model, Shape } from '@antv/x6'
 import { register, getTeleport } from '@antv/x6-vue-shape'
 import { Selection } from '@antv/x6-plugin-selection'
 import { Keyboard } from '@antv/x6-plugin-keyboard'
@@ -35,10 +35,9 @@ import WorkflowNodeSaveModal from './WorkflowNodeSaveModal.vue'
 
 const showEditPaneRef = ref()
 const showEditPane = ref(false)
-
-defineProps({
-  value: {
-    type: String,
+const props = defineProps({
+  graphData: {
+    type: Object,
     required: false
   }
 })
@@ -324,16 +323,26 @@ onMounted(() => {
   })
 })
 
+watch(
+  () => props.graphData,
+  (newGraphData) => {
+    if (newGraphData) {
+      console.log('正在导入工作流', newGraphData)
+      graphHolder.value!!.fromJSON(newGraphData as Model.FromJSONData)
+    }
+  }
+)
+
 const exportGraph = () => {
-  const graphData = graphHolder.value!!.toJSON().cells
+  const graphCellData = graphHolder.value!!.toJSON().cells
   const nodeId2ChildrenIds = getNodeChildrenMap()
-  graphData
+  graphCellData
     .filter((it) => it.shape === 'workflow-node')
     .forEach((it) => {
       it.data!!.uuid = it.id
       it.data!!.childrenUuids = nodeId2ChildrenIds.get(it.id!!) || []
     })
-  return graphData
+  return graphCellData
 }
 
 const getNodeChildrenMap = () => {

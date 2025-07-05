@@ -31,10 +31,7 @@
           name="scheduleType"
           :rules="[{ required: true, message: 'Please Select scheduleType!' }]"
         >
-          <a-select
-            v-model:value="currentWorkflow.scheduleType.code"
-            :options="scheduleTypeOptions"
-          />
+          <a-select v-model:value="currentWorkflow.scheduleType" :options="scheduleTypeOptions" />
         </a-form-item>
 
         <a-form-item
@@ -85,7 +82,7 @@
       </a-form>
     </div>
 
-    <WorkflowEditor ref="workflowEditorRef" />
+    <WorkflowEditor ref="workflowEditorRef" :graphData="graphData" />
   </div>
 </template>
 
@@ -96,7 +93,7 @@ import { Modal, message } from 'ant-design-vue'
 import { parseCron } from '@/service/api/toolApi'
 import { listMetadata } from '@/service/api/metadataApi'
 import { buildMetadataOptions } from '@/utils/metadataUtils'
-import { addWorkflow } from '@/service/api/workflowApi'
+import { addWorkflow, getWorkflow } from '@/service/api/workflowApi'
 import WorkflowEditor from '@/components/WorkflowEditor.vue'
 import { globalStore } from '@/stores/global'
 
@@ -105,6 +102,7 @@ const router = useRouter()
 const appCode = route.query.appCode || ''
 const workflowId = route.query.workflowId || null
 
+const graphData = ref({})
 const workflowEditorRef = ref()
 const scheduleTypeOptions = ref([])
 const executeModeOptions = ref([])
@@ -178,6 +176,11 @@ const fetchMetadatas = async () => {
 }
 
 onMounted(async () => {
+  if (workflowId) {
+    const workflow = await getWorkflow({ workflowId })
+    Object.assign(currentWorkflow, workflow)
+    graphData.value = JSON.parse(workflow.graphData)
+  }
   fetchMetadatas()
 })
 </script>
