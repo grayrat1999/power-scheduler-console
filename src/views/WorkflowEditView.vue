@@ -93,7 +93,7 @@ import { Modal, message } from 'ant-design-vue'
 import { parseCron } from '@/service/api/toolApi'
 import { listMetadata } from '@/service/api/metadataApi'
 import { buildMetadataOptions } from '@/utils/metadataUtils'
-import { addWorkflow, getWorkflow } from '@/service/api/workflowApi'
+import { getWorkflow, addWorkflow, editWorkflow } from '@/service/api/workflowApi'
 import WorkflowEditor from '@/components/WorkflowEditor.vue'
 import { globalStore } from '@/stores/global'
 
@@ -141,16 +141,24 @@ const handleSave = async () => {
   const graphData = workflowEditorRef.value.exportGraph()
   const namespaceCode = globalStore.getNamespaceCode()
   console.log('导出图形数据:', graphData)
-  const returnWorkflowId = await addWorkflow({
-    namespaceCode,
-    appCode,
-    ...currentWorkflow,
-    retentionPolicy: currentWorkflow.retentionPolicy,
-    scheduleType: currentWorkflow.scheduleType,
-    nodes: graphData.filter((it) => it.shape === 'workflow-node').map((it) => it.data),
-    graphData: JSON.stringify(graphData)
-  })
-  if (!workflowId) {
+
+  if (workflowId) {
+    await editWorkflow({
+      workflowId,
+      ...currentWorkflow,
+      nodes: graphData.filter((it) => it.shape === 'workflow-node').map((it) => it.data),
+      graphData: JSON.stringify(graphData)
+    })
+    message.success('保存成功')
+  } else {
+    const returnWorkflowId = await addWorkflow({
+      namespaceCode,
+      appCode,
+      ...currentWorkflow,
+      nodes: graphData.filter((it) => it.shape === 'workflow-node').map((it) => it.data),
+      graphData: JSON.stringify(graphData)
+    })
+    message.success('保存成功')
     router.push({
       name: '工作流编辑器',
       query: { workflowId: returnWorkflowId }
