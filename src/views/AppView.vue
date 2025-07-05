@@ -15,6 +15,10 @@
         </div>
       </a-layout-content>
     </a-layout>
+
+    <a-layout-footer class="h-4 flex items-center justify-center">
+      <a href="http://beian.miit.gov.cn" target="_blank">浙ICP备2025181588号</a>
+    </a-layout-footer>
   </a-layout>
 </template>
 
