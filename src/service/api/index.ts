@@ -11,6 +11,7 @@ import * as appGroupApi from './appGroupApi'
 import * as workerApi from './workerApi'
 import * as toolApi from './toolApi'
 import * as metadataApi from './metadataApi'
+import * as workflowInstanceApi from './workflowInstanceApi'
 export default {
   workflowApi,
   namespaceApi,
@@ -20,5 +21,6 @@ export default {
   appGroupApi,
   workerApi,
   toolApi,
-  metadataApi
+  metadataApi,
+  workflowInstanceApi
 }

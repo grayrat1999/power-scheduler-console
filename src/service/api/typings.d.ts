@@ -78,6 +78,10 @@ declare namespace API {
     jobInstanceId: number
   }
 
+  type getWorkflowInstanceParams = {
+    workflowInstanceId: number
+  }
+
   type getWorkflowParams = {
     workflowId: number
   }
@@ -312,6 +316,10 @@ declare namespace API {
     param?: WorkerQueryRequestDTO
   }
 
+  type listWorkflowInstanceParams = {
+    param?: WorkflowInstanceQueryRequestDTO
+  }
+
   type listWorkflowParams = {
     param?: WorkflowQueryRequestDTO
   }
@@ -386,6 +394,14 @@ declare namespace API {
     totalPages: number
     totalElements: number
     content: NamespaceQueryResponseDTO[]
+  }
+
+  type PageDTOWorkflowInstanceQueryResponseDTO = {
+    number: number
+    size: number
+    totalPages: number
+    totalElements: number
+    content: WorkflowInstanceQueryResponseDTO[]
   }
 
   type PageDTOWorkflowQueryResponseDTO = {
@@ -685,6 +701,27 @@ declare namespace API {
     }
   }
 
+  type ResponseWrapperPageDTOWorkflowInstanceQueryResponseDTO = {
+    data?: PageDTOWorkflowInstanceQueryResponseDTO
+    success: boolean
+    code: string
+    message: string
+    cause?: {
+      stackTrace?: {
+        classLoaderName?: string
+        moduleName?: string
+        moduleVersion?: string
+        methodName?: string
+        fileName?: string
+        lineNumber?: number
+        className?: string
+        nativeMethod?: boolean
+      }[]
+      message?: string
+      localizedMessage?: string
+    }
+  }
+
   type ResponseWrapperPageDTOWorkflowQueryResponseDTO = {
     data?: PageDTOWorkflowQueryResponseDTO
     success: boolean
@@ -749,6 +786,27 @@ declare namespace API {
 
   type ResponseWrapperWorkflowDetailResponseDTO = {
     data?: WorkflowDetailResponseDTO
+    success: boolean
+    code: string
+    message: string
+    cause?: {
+      stackTrace?: {
+        classLoaderName?: string
+        moduleName?: string
+        moduleVersion?: string
+        methodName?: string
+        fileName?: string
+        lineNumber?: number
+        className?: string
+        nativeMethod?: boolean
+      }[]
+      message?: string
+      localizedMessage?: string
+    }
+  }
+
+  type ResponseWrapperWorkflowInstanceDetailResponseDTO = {
+    data?: WorkflowInstanceDetailResponseDTO
     success: boolean
     code: string
     message: string
@@ -842,9 +900,36 @@ declare namespace API {
     graphData?: string
   }
 
+  type WorkflowInstanceDetailResponseDTO = {
+    appName?: string
+    id?: number
+    workflowId?: number
+    code?: string
+    name?: string
+    status?: 'WAITING' | 'RUNNING' | 'SUCCEED' | 'FAILED' | 'CANCELED'
+    dataTime?: string
+    graphData?: string
+  }
+
+  type WorkflowInstanceQueryRequestDTO = {
+    pageNo: number
+    pageSize: number
+    status?: 'WAITING' | 'RUNNING' | 'SUCCEED' | 'FAILED' | 'CANCELED'
+  }
+
+  type WorkflowInstanceQueryResponseDTO = {
+    appName?: string
+    id?: number
+    workflowId?: number
+    name?: string
+    code?: string
+    status?: 'WAITING' | 'RUNNING' | 'SUCCEED' | 'FAILED' | 'CANCELED'
+    dataTime?: string
+  }
+
   type WorkflowNodeDTO = {
-    uuid?: string
-    childrenUuids: string[]
+    workflowNodeCode?: string
+    workflowNodeChildCodes: string[]
     name?: string
     description?: string
     jobType: 'JAVA' | 'SCRIPT'

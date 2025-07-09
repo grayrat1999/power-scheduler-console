@@ -339,8 +339,8 @@ const exportGraph = () => {
   graphCellData
     .filter((it) => it.shape === 'workflow-node')
     .forEach((it) => {
-      it.data!!.uuid = it.id
-      it.data!!.childrenUuids = nodeId2ChildrenIds.get(it.id!!) || []
+      it.data!!.workflowNodeCode = it.id
+      it.data!!.workflowNodeChildCodes = nodeId2ChildrenIds.get(it.id!!) || []
     })
   return graphCellData
 }
