@@ -919,6 +919,8 @@ declare namespace API {
     pageSize: number
     namespaceCode?: string
     appCode?: string
+    workflowId?: number
+    workflowInstanceId?: number
     status?: 'WAITING' | 'RUNNING' | 'SUCCEED' | 'FAILED' | 'CANCELED'
     startAtRange?: string[]
     endAtRange?: string[]
