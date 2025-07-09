@@ -22,7 +22,7 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item name="workflowId" label="工作流名称">
+          <a-form-item name="workflowId" label="工作流">
             <a-select
               show-search
               allowClear
@@ -45,8 +45,8 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item name="jobInstanceId" label="实例id">
-            <a-input v-model:value="queryFormState.jobInstanceId"></a-input>
+          <a-form-item name="workflowInstanceId" label="实例id">
+            <a-input v-model:value="queryFormState.workflowInstanceId"></a-input>
           </a-form-item>
         </a-col>
       </a-row>
