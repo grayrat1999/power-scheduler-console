@@ -901,12 +901,15 @@ declare namespace API {
   }
 
   type WorkflowInstanceDetailResponseDTO = {
+    appCode?: string
     appName?: string
     id?: number
     workflowId?: number
     code?: string
     name?: string
     status?: 'WAITING' | 'RUNNING' | 'SUCCEED' | 'FAILED' | 'CANCELED'
+    startAt?: string
+    endAt?: string
     dataTime?: string
     graphData?: string
   }
@@ -914,17 +917,24 @@ declare namespace API {
   type WorkflowInstanceQueryRequestDTO = {
     pageNo: number
     pageSize: number
+    namespaceCode?: string
+    appCode?: string
     status?: 'WAITING' | 'RUNNING' | 'SUCCEED' | 'FAILED' | 'CANCELED'
+    startAtRange?: string[]
+    endAtRange?: string[]
   }
 
   type WorkflowInstanceQueryResponseDTO = {
+    appCode?: string
     appName?: string
     id?: number
     workflowId?: number
     name?: string
     code?: string
-    status?: 'WAITING' | 'RUNNING' | 'SUCCEED' | 'FAILED' | 'CANCELED'
+    status?: WorkflowStatusDTO
     dataTime?: string
+    startAt?: string
+    endAt?: string
   }
 
   type WorkflowNodeDTO = {
@@ -969,6 +979,11 @@ declare namespace API {
     workflowId: number
     workerAddress?: string
     dataTime?: string
+  }
+
+  type WorkflowStatusDTO = {
+    code?: string
+    label?: string
   }
 
   type WorkflowSwitchRequestDTO = {

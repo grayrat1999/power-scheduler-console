@@ -16,17 +16,17 @@
               show-search
               :options="appGroupOptions"
               :filterOption="false"
-              @change="handleJobGroupChange"
+              @change="handleAppGroupChange"
               @search="fetchAppGroupOptions"
             />
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item name="jobId" label="任务名称">
+          <a-form-item name="workflowId" label="工作流名称">
             <a-select
               show-search
               allowClear
-              v-model:value="queryFormState.jobId"
+              v-model:value="queryFormState.workflowId"
               :options="jobInfoOptions"
               :filterOption="false"
             />
@@ -35,17 +35,17 @@
       </a-row>
       <a-row :gutter="24">
         <a-col :span="12">
-          <a-form-item name="jobStatus" label="任务状态">
+          <a-form-item name="status" label="实例状态">
             <a-select
               allowClear
               class="w-full"
-              v-model:value="queryFormState.jobStatus"
-              :options="jobStatusOptions"
+              v-model:value="queryFormState.status"
+              :options="workflowStatusOptions"
             />
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item name="jobInstanceId" label="任务实例id">
+          <a-form-item name="jobInstanceId" label="实例id">
             <a-input v-model:value="queryFormState.jobInstanceId"></a-input>
           </a-form-item>
         </a-col>
@@ -91,18 +91,6 @@
         @change="handleTableChange"
       >
         <template #bodyCell="{ column, record }">
-          <template v-if="column.dataIndex === 'jobType&processor'">
-            <div>{{ record.jobType.label }}</div>
-
-            <a-typography-text
-              v-if="record.jobType.code === 'JAVA'"
-              :style="{ width: '150px' }"
-              :ellipsis="{ tooltip: record.processor }"
-              v-model:content="record.processor"
-            >
-            </a-typography-text>
-          </template>
-
           <template v-if="column.dataIndex === 'operation'">
             <span
               class="mr-1 text-blue-500 cursor-pointer"
@@ -154,7 +142,8 @@ import { Modal, message } from 'ant-design-vue'
 import { reactive, ref, h, onMounted } from 'vue'
 
 import { listAppGroup } from '@/service/api/appGroupApi'
-import { listJobInstance, terminate, reattempt } from '@/service/api/jobInstanceApi'
+import { listWorkflowInstance } from '@/service/api/workflowInstanceApi'
+import { terminate, reattempt } from '@/service/api/jobInstanceApi'
 import { listMetadata } from '@/service/api/metadataApi'
 import { listJobInfo } from '@/service/api/jobInfoApi'
 import { buildMetadataOptions } from '@/utils/metadataUtils'
@@ -170,12 +159,12 @@ const queryFormState = reactive({})
 
 const columns = [
   {
-    title: '任务实例id',
+    title: '实例id',
     dataIndex: 'id'
   },
   {
-    title: '任务名称',
-    dataIndex: 'jobName',
+    title: '实例名称',
+    dataIndex: 'name',
     ellipsis: true
   },
   {
@@ -183,12 +172,8 @@ const columns = [
     dataIndex: 'appName'
   },
   {
-    title: '任务类型/处理器',
-    dataIndex: 'jobType&processor'
-  },
-  {
     title: '任务状态',
-    dataIndex: ['jobStatus', 'label']
+    dataIndex: ['status', 'label']
   },
   {
     title: '开始时间',
@@ -206,18 +191,19 @@ const columns = [
 
 const appGroupOptions = ref([])
 const jobInfoOptions = ref([])
-const jobStatusOptions = ref([])
+const workflowStatusOptions = ref([])
 const dataSource = ref([])
 
 const { run, loading, current, pagination, pageSize } = requestForPage(
-  async (params) => listJobInstance(params),
+  async (params) => listWorkflowInstance(params),
   {
     onSuccess: (data) => {
       let content = data.content
       for (let item of content) {
-        item.showMoreAction = item.jobStatus.code != 'WAITING_SCHEDULE'
+        item.showMoreAction = item.status.code != 'WAITING_SCHEDULE'
       }
       dataSource.value = content
+      console.log('dataSource.value:', dataSource.value)
     }
   }
 )
@@ -235,7 +221,7 @@ const handleTableChange = (page, filters, sorter) => {
   })
 }
 
-const fetchJobInstance = async () => {
+const fetchWorkflowInstance = async () => {
   const { appCode, jobId, jobInstanceId, jobStatus, processor, startAtRange, endAtRange } =
     queryFormState
   const namespaceCode = globalStore.getNamespaceCode()
@@ -254,15 +240,15 @@ const fetchJobInstance = async () => {
 }
 
 const onFinish = (values) => {
-  fetchJobInstance()
+  fetchWorkflowInstance()
 }
 
-const handleJobGroupChange = (value) => {
+const handleAppGroupChange = (value) => {
   globalStore.setAppCode(value)
-  fetchJobInfo(value)
+  fetchWorkflow(value)
 }
 
-const fetchJobInfo = async (appCode) => {
+const fetchWorkflow = async (appCode) => {
   const namespaceCode = globalStore.getNamespaceCode()
   let jobInfoPage = await listJobInfo({
     namespaceCode,
@@ -311,7 +297,7 @@ const handleReattemptJob = async (record) => {
     onOk: async () => {
       await reattempt({ jobInstanceId: record.id })
       message.success('操作成功')
-      fetchJobInstance()
+      fetchWorkflowInstance()
     }
   })
 }
@@ -329,7 +315,7 @@ const handleTerminateJob = async (record) => {
     onOk: async () => {
       await terminate({ jobInstanceId: record.id })
       message.success('操作成功')
-      fetchJobInstance()
+      fetchWorkflowInstance()
     }
   })
 }
@@ -337,12 +323,12 @@ const handleTerminateJob = async (record) => {
 const initOptions = async () => {
   queryFormState.appCode = globalStore.getAppCode()
   const metadatas = await listMetadata({
-    metadataCodes: ['JobStatusEnum']
+    metadataCodes: ['WorkflowStatusEnum']
   })
   const options = buildMetadataOptions(metadatas)
-  jobStatusOptions.value = options['JobStatusEnum']
+  workflowStatusOptions.value = options['WorkflowStatusEnum']
   fetchAppGroupOptions(null)
-  fetchJobInfo(queryFormState.appCode)
+  fetchWorkflow(queryFormState.appCode)
 }
 
 onMounted(async () => {
