@@ -49,7 +49,7 @@ const items = reactive([
   ]),
   getItem('工作流管理', '', () => h(BranchesOutlined), [
     getItem('工作流配置', 'workflowManager'),
-    getItem('工作流执行记录', 'jobInstanceManager')
+    getItem('工作流执行记录', 'workflowInstanceManager')
   ]),
   getItem('系统管理', '', () => h(SettingOutlined), [
     getItem('命名空间', 'namespaceManager', () => h(ClusterOutlined)),
