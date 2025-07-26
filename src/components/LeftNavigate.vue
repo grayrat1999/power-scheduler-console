@@ -7,6 +7,7 @@
     :items="items"
     @click="handleClick"
     @openChange="handleOpenChange"
+    collapsed
   />
 </template>
 
@@ -23,7 +24,9 @@ import {
   BellOutlined,
   MailOutlined,
   SettingOutlined,
-  ClusterOutlined
+  ClusterOutlined,
+  BranchesOutlined,
+  ScheduleOutlined
 } from '@ant-design/icons-vue'
 
 const router = useRouter()
@@ -40,9 +43,15 @@ function getItem(label, key, icon, children, type) {
 }
 const items = reactive([
   getItem('首页', 'index', () => h(DashboardOutlined)),
-  getItem('任务管理', 'jobManager', () => h(FunctionOutlined)),
-  getItem('执行记录', 'jobInstanceManager', () => h(CalendarOutlined)),
-  getItem('系统管理', 'systemManager', () => h(SettingOutlined), [
+  getItem('任务管理', '', () => h(ScheduleOutlined), [
+    getItem('任务配置', 'jobManager'),
+    getItem('任务执行记录', 'jobInstanceManager')
+  ]),
+  getItem('工作流管理', '', () => h(BranchesOutlined), [
+    getItem('工作流配置', 'workflowManager'),
+    getItem('工作流执行记录', 'workflowInstanceManager')
+  ]),
+  getItem('系统管理', '', () => h(SettingOutlined), [
     getItem('命名空间', 'namespaceManager', () => h(ClusterOutlined)),
     getItem('应用分组', 'groupManager', () => h(AppstoreOutlined))
   ])
@@ -60,7 +69,6 @@ const handleOpenChange = (openKeys) => {
 onMounted(() => {
   const storedSelectedKey = sessionStorage.getItem('selectedMenuItem')
   const storedOpenKeys = sessionStorage.getItem('openKeys')
-  console.log(storedSelectedKey)
   if (storedSelectedKey) {
     selectedKeys.value = [storedSelectedKey]
   }
